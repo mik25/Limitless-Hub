@@ -1,155 +1,181 @@
 <html ng-app="titledbApp" style="background-color:#e2e2e2">
-<head>
 
-	<!-- MaterialDesignIcons -->
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<head>
 
-	<!-- Roboto Font -->
-	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+		<!-- Roboto Font -->
+		<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
 
-	<!-- Custom Styling -->
-	<link rel="stylesheet" href="css/custom.css" />
+		<!-- MaterialDesignIcons -->
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-	<!-- AngularJS -->
-	<link rel="stylesheet" href="css/angular-material.min.css">
-	<script src="js/angular.min.js"></script>
-	<script src="js/angular-animate.min.js"></script>
-	<script src="js/angular-aria.min.js"></script>
-	<script src="js/angular-messages.min.js"></script>
-	<script src="js/angular-cookies.min.js"></script>
-	<script src="js/angular-material.min.js"></script>
-	<script src="js/constants.js"></script>
+		<!-- Custom Styling -->
+		<link rel="stylesheet" href="css/custom.css" />
 
-	<!-- Common -->
-	<script src="js/jquery.min.js"></script>
+		<!-- AngularJS -->
+		<link rel="stylesheet" href="css/angular-material.min.css">
+		<script src="js/angular.min.js"></script>
+		<script src="js/angular-animate.min.js"></script>
+		<script src="js/angular-aria.min.js"></script>
+		<script src="js/angular-messages.min.js"></script>
+		<script src="js/angular-cookies.min.js"></script>
+		<script src="js/angular-material.min.js"></script>
+		<script src="js/constants.js"></script>
 
-	<!-- Video Player -->
-	<link href="http://vjs.zencdn.net/5.15.1/video-js.css" rel="stylesheet">
+		<!-- jQuery -->
+		<script src="js/jquery.min.js"></script>
 
-	<!-- Angular Controllers -->
-	<script src="js/main.js"></script>
+		<!-- Video Player -->
+		<link href="http://vjs.zencdn.net/5.15.1/video-js.css" rel="stylesheet">
+		<script src="http://vjs.zencdn.net/5.15.1/video.js"></script>
+		<!-- ¬ Resolution-Switcher -->
+		<link href="css/videojs-resolution-switcher.css" rel="stylesheet" type="text/css" />
+		<script src="js/videojs-resolution-switcher.js"></script>
 
-	<script>
-	const remote = require('electron').remote;
+		<!-- Angular Controllers -->
+		<script src="js/main.js"></script>
 
-	document.addEventListener("keydown", function (e) {
-		if (e.which === 123) {
-			remote.getCurrentWindow().toggleDevTools();
-		}
-		if (!e.metaKey) {
-		    if(e.keyCode >= 65 && event.keyCode <= 90 || e.keyCode >= 48 && event.keyCode <= 57) {
-	            document.getElementById("search").focus();
-		    }
-		}
-	});
-	document.addEventListener("keyup", function (e) {
-     	if (e.keyCode == 27) {
-	        searchQuery = '';
-		}
-	});
-	</script>
+		<script>
+		const remote = require('electron').remote;
 
-</head>
+		document.addEventListener("keydown", function (e) {
+			if (e.which === 123) {
+				remote.getCurrentWindow().toggleDevTools();
+			}
+			if (!e.metaKey) {
+				if(e.keyCode >= 65 && event.keyCode <= 90 || e.keyCode >= 48 && event.keyCode <= 57) {
+					document.getElementById("search").focus();
+				}
+			}
+		});
+		document.addEventListener("keyup", function (e) {
+			if (e.keyCode == 27) {
+				searchQuery = '';
+			}
+		});
+		</script>
 
-<body ng-controller="TitleListController">
+	</head>
 
-	<div layout="column" layout-fill>
+	<body ng-controller="TitleListController">
 
-		<md-toolbar style="background-color:#fff;color:#555">
-			<div class="md-toolbar-tools" style="z-index:2;border-bottom:#e5e5e5 solid;border-bottom-width:1px;-webkit-app-region: drag">
-				<!--img ng-src="logo.png" style="height:60%"-->
-				<input ng-model="searchQuery" placeholder="Type anywhere to search..." class="search" id="search" value="" init-from-form>
-				<md-button class="md-icon-button" ng-click="searchQuery = ''" ng-show="searchQuery" style="display:inline-flex;-webkit-app-region: no-drag"><md-icon class="material-icons">close</md-icon></md-button>
-				<span flex></span>
-				<md-button class="md-icon-button" aria-label="Open Settings" ng-click="data.selectedIndex=3" style="-webkit-app-region: no-drag"><md-icon class="material-icons">settings</md-icon></md-button>
-				<md-button class="md-icon-button" onclick="remote.getCurrentWindow().minimize()" style="-webkit-app-region: no-drag"><md-icon class="material-icons">expand_more</md-icon></md-button>
-				<md-button class="md-icon-button" onclick="remote.getCurrentWindow().maximize()" style="-webkit-app-region: no-drag"><md-icon class="material-icons">expand_less</md-icon></md-button>
-				<md-button class="md-icon-button" onclick="remote.getCurrentWindow().close()" style="-webkit-app-region: no-drag"><md-icon class="material-icons">close</md-icon></md-button>
-			</div>
-			<md-tabs md-stretch-tabs class="md-whiteframe-2dp" md-selected="data.selectedIndex" style="z-index:1">
-				<md-tab aria-controls="movies-page">Movies</md-tab>
-				<md-tab aria-controls="tv-page">TV Shows</md-tab>
-				<md-tab aria-controls="watch-page">Watch Page</md-tab>
-				<md-tab aria-controls="config-page">Settings</md-tab>
-			</md-tabs>
-		</md-toolbar>
+		<div layout="column" layout-fill>
 
-		<md-content flex layout-fill style="background-color:#e2e2e2;padding:10px">
+			<md-toolbar style="background-color:#fff;color:#555">
+				<!-- TitleBar - Search & Combobox -->
+				<div class="md-toolbar-tools" style="z-index:2;border-bottom:#e5e5e5 solid;border-bottom-width:1px;-webkit-app-region: drag">
+					<!--img ng-src="logo.png" style="height:60%"-->
+					<input ng-model="searchQuery" placeholder="Type anywhere to search..." class="search" id="search" value="" init-from-form>
+					<md-button class="md-icon-button" ng-click="searchQuery = ''" ng-show="searchQuery" style="display:inline-flex;-webkit-app-region: no-drag"><md-icon class="material-icons">close</md-icon></md-button>
+					<span flex></span>
+					<md-button class="md-icon-button" aria-label="Open Settings" ng-click="data.selectedIndex=4" style="-webkit-app-region: no-drag"><md-icon class="material-icons">settings</md-icon></md-button>
+					<md-button class="md-icon-button" onclick="remote.getCurrentWindow().minimize()" style="-webkit-app-region: no-drag"><md-icon class="material-icons">expand_more</md-icon></md-button>
+					<md-button class="md-icon-button" onclick="remote.getCurrentWindow().maximize()" style="-webkit-app-region: no-drag"><md-icon class="material-icons">expand_less</md-icon></md-button>
+					<md-button class="md-icon-button" onclick="remote.getCurrentWindow().close()" style="-webkit-app-region: no-drag"><md-icon class="material-icons">close</md-icon></md-button>
+				</div>
+				<!-- TitleBar - Tabs -->
+				<md-tabs md-stretch-tabs class="md-whiteframe-2dp" md-selected="data.selectedIndex" style="z-index:1">
+					<md-tab aria-controls="movies-page">Movies</md-tab>
+					<md-tab aria-controls="tv-page">TV Shows</md-tab>
+					<md-tab aria-controls="anime-page">Anime</md-tab>
+					<md-tab aria-controls="watch-page">Watch Page</md-tab>
+					<md-tab aria-controls="config-page">Settings</md-tab>
+				</md-tabs>
+			</md-toolbar>
+
+			<md-content flex layout-fill style="background-color:#e2e2e2;padding:10px">
+				
+				<ng-switch on="data.selectedIndex" class="tabpanel-container" style="background-color:#e2e2e2">
 					
-			<ng-switch on="data.selectedIndex" class="tabpanel-container" style="background-color:#e2e2e2">
-		  
-				<div role="tabpanel" id="movies-page" aria-labelledby="tab1" ng-switch-when="0" md-swipe-left="next()" md-swipe-right="previous()" layout-padding style="padding-top:0">
+					<div role="tabpanel" id="movies-page" aria-labelledby="tab1" ng-switch-when="0" md-swipe-left="next()" md-swipe-right="previous()" layout-padding style="padding-top:0">
 
-					<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="8px">
+						<!-- List all Movies -->
+						<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="8px">
 
-						<md-grid-tile ng-repeat="movie in movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-							<img ng-src="{{movie.poster}}" class="md-card-image" alt="{{movie.name}}" style="width:100%;height:100%">
-							<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=2;watchUrl('false', movie.dl_links._720p, movie)"></md-grid-tile-footer>
-						</md-grid-tile>
-
-					</md-grid-list>
-
-				</div>
-
-				<div role="tabpanel" id="tv-page" ng-controller="tv-page" aria-labelledby="tab2" ng-switch-when="1" md-swipe-left="next()" md-swipe-right="previous()" layout-padding style="padding-top:0">
-
-					<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="8px">
-
-						<md-grid-tile ng-repeat="show in shows | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-							<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=2;watchUrl('false', show.seasons.season_1[0]._720p, show)"></md-grid-tile-footer>
-							<img ng-src="{{show.poster}}" class="md-card-image" alt="{{show.name}}" style="width:100%;height:100%">
-						</md-grid-tile>
-
-					</md-grid-list>
-
-				</div>
-
-				<div role="tabpanel" id="watch-page" aria-labelledby="tab3" ng-switch-when="2" md-swipe-left="next()" md-swipe-right="previous()" layout-align="center center" layout-margin>
-
-					<video id="{{show_name}}" class="video-js vjs-default-skin vjs-hidden" autoplay controls preload="auto" width="640" height="360" style="margin:0 auto">
-					    <source src="" type='video/mp4'>
-					    <p class="vjs-no-js">
-					      To view this video please enable JavaScript, and consider upgrading to a web browser that
-					      <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-					    </p>
-					</video>
-					<script src="http://vjs.zencdn.net/5.15.1/video.js"></script>
-
-					<md-divider id="1st-divider" class="hidden"></md-divider>
-					<md-button class="md-raised" ng-click="data.selectedIndex=2;watchUrl('true', link.link)" ng-repeat="link in show.dl_links" ng-if="show.dl_links[0].quality">{{link.quality}}</md-button>
-
-					<div ng-repeat="season in show.seasons" ng-if="show.seasons[0].episodes">
-
-						<h3>Season {{season.num}}</h3>
-						<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="16:9" md-gutter="8px">
-
-							<md-grid-tile ng-repeat="episode in season.episodes" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-								<md-grid-tile-header style="background:rgba(0,0,0,0);height:100%" ng-click="data.selectedIndex=2;watchUrl('true', episode._720p)"></md-grid-tile-header>
-								<md-grid-tile-footer style="background:linear-gradient(to bottom,rgba(40,44,52,0),rgba(40,44,52,0.8));height:26px" ng-click="data.selectedIndex=2;watchUrl('true', episode._720p)"><h3 style="text-shadow:1px 1px 2px rgba(0,0,0,0.5)">#{{episode.num}}</h3></md-grid-tile-footer>
-								<img ng-src="{{episode.screenshot}}" class="md-card-image" alt="{{show.name}}" style="width:100%;height:100%">
+							<md-grid-tile ng-repeat="movie in movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+								<img ng-src="{{movie.poster}}" class="md-card-image" alt="{{movie.name}}" style="width:100%;height:100%">
+								<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;watchUrl('false', movie)"></md-grid-tile-footer>
 							</md-grid-tile>
 
 						</md-grid-list>
 
 					</div>
 
-				</div>
+					<div role="tabpanel" id="tv-page" ng-controller="tv-page" aria-labelledby="tab2" ng-switch-when="1" md-swipe-left="next()" md-swipe-right="previous()" layout-padding style="padding-top:0">
 
-				<div role="tabpanel" id="config-page" aria-labelledby="tab4" ng-switch-when="3" md-swipe-left="next()" md-swipe-right="previous()" layout-align="center center" layout-margin>
+						<!-- List all Shows -->
+						<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="8px">
 
-					<md-switch ng-model="settings.eur" ng-change="changeSetting()">Hide title's with only EUR download links</md-switch>
-			        <md-switch ng-model="settings.usa" ng-change="changeSetting()">Hide title's with only USA download links</md-switch>
-			        <md-switch ng-model="settings.leak" ng-change="changeSetting()">Hide title's with only leaked download links</md-switch>
+							<md-grid-tile ng-repeat="show in shows | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+								<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;watchUrl('false', show)"></md-grid-tile-footer>
+								<img ng-src="{{show.poster}}" class="md-card-image" alt="{{show.name}}" style="width:100%;height:100%">
+							</md-grid-tile>
 
-				</div>
-		  
-			</ng-switch>
+						</md-grid-list>
 
-		</md-content>
+					</div>
 
-	</div>
+					<div role="tabpanel" id="anime-page" ng-controller="anime-page" aria-labelledby="tab3" ng-switch-when="2" md-swipe-left="next()" md-swipe-right="previous()" layout-padding style="padding-top:0">
 
-	<div id="gradient"></div>
+						<!-- List all Anime -->
+						<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="8px">
 
-</body>
+							<md-grid-tile ng-repeat="anim in anime | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+								<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;watchUrl('false', anim)"></md-grid-tile-footer>
+								<img ng-src="{{anim.poster}}" class="md-card-image" alt="{{anim.name}}" style="width:100%;height:100%">
+							</md-grid-tile>
+
+						</md-grid-list>
+
+					</div>
+
+					<div role="tabpanel" id="watch-page" aria-labelledby="tab3" ng-switch-when="3" md-swipe-left="next()" md-swipe-right="previous()" layout-align="center center" layout-margin>
+
+						<!-- Video Player - Hidden by default -->
+						<video id="{{show_name}}" class="video-js vjs-default-skin vjs-hidden" autoplay controls preload="auto" width="640" height="360" data-setup='{ "plugins": { "videoJsResolutionSwitcher": {"default": "720p", "dynamicLabel": true} } }' style="margin:0 auto">
+								<p class="vjs-no-js">
+									To view this video please enable JavaScript, and consider upgrading to a web browser that
+									<a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+								</p>
+						</video>
+
+						<!-- Divider for the Video to the Quality Buttons/Episode Images -->
+						<md-divider id="1st-divider" class="hidden"></md-divider>
+
+						<!-- List all the Quality Buttons -->
+						<md-button class="md-raised" ng-click="data.selectedIndex=3;watchUrl('true', null, link.link)" ng-repeat="link in show.dl_links" ng-if="show.dl_links[0].quality">{{link.quality}}</md-button>
+
+						<!-- List all the episodes for the selected show -->
+						<div ng-repeat="season in show.seasons" ng-if="show.seasons[0].episodes">
+
+							<h3>Season {{season.num}}</h3>
+							<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="16:9" md-gutter="8px">
+
+								<md-grid-tile ng-repeat="episode in season.episodes" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+									<md-grid-tile-header style="background:rgba(0,0,0,0);height:100%" ng-click="data.selectedIndex=3;watchUrl('true', null, episode)"></md-grid-tile-header>
+									<md-grid-tile-footer style="background:linear-gradient(to bottom,rgba(40,44,52,0),rgba(40,44,52,0.8));height:26px" ng-click="data.selectedIndex=3;watchUrl('true', null, episode)"><h3 style="text-shadow:1px 1px 2px rgba(0,0,0,0.5)">#{{episode.num}}</h3></md-grid-tile-footer>
+									<img ng-src="{{episode.screenshot}}" class="md-card-image" alt="{{show.name}}" style="width:100%;height:100%">
+								</md-grid-tile>
+
+							</md-grid-list>
+
+						</div>
+
+					</div>
+
+					<div role="tabpanel" id="config-page" aria-labelledby="tab4" ng-switch-when="4" md-swipe-left="next()" md-swipe-right="previous()" layout-align="center center" layout-margin>
+
+						<h3>Soon!</h3>
+
+					</div>
+				
+				</ng-switch>
+
+			</md-content>
+
+		</div>
+
+		<div id="gradient"></div>
+
+	</body>
+
 </html>

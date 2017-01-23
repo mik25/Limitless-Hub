@@ -50,8 +50,8 @@ img {
   pointer-events:none!important;
 }
 
-[aria-controls="tab-content-2"],
-[aria-controls="tab-content-3"] {
+[aria-controls="tab-content-3"],
+[aria-controls="tab-content-4"] {
     display: none!important;
 }
 

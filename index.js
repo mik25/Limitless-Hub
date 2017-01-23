@@ -30,7 +30,9 @@ function createwindow () {
   updating.loadURL(url.format({ pathname: path.join(__dirname, 'updating.html'), protocol: 'file:', slashes: true }))
 
   autoUpdater.checkForUpdates()
-  mainwin.webContents.openDevTools()
+  
+  //mainwin.webContents.openDevTools()
+
   mainwin.on('closed', () => {
     app.quit()
     mainwin = null

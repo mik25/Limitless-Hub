@@ -1,11 +1,11 @@
 {
-  "name": "Quick-Hub",
-  "productname": "Quick-Hub",
-  "version": "0.9.0",
+  "name": "Limitless-Hub",
+  "productname": "Limitless-Hub",
+  "version": "0.9.1",
   "description": "Quick & Easy Movie, TV Show and Anime Streaming Hub!",
-  "author": "initPRAGMA <initializingpragma@gmail.com> (https://github.com/initPRAGMA/Quick-Hub)",
+  "author": "initPRAGMA <initializingpragma@gmail.com> (https://github.com/initPRAGMA/Limitless-Hub)",
   "email": "initializingpragma@gmail.com",
-  "repository": "https://github.com/initPRAGMA/Quick-Hub",
+  "repository": "https://github.com/initPRAGMA/Limitless-Hub",
   "license": "ISC",
   "main": "index.js",
   "scripts": {
@@ -18,13 +18,13 @@
     "p:all": "p:win && p:osx && p:lin"
   },
   "build": {
-    "appId": "quickhub",
+    "appId": "limitlesshub",
     "compression": "maximum",
     "mac": {
-      "category": "quickhub"
+      "category": "limitlesshub"
     },
     "win": {
-      "iconUrl": "https://raw.githubusercontent.com/initPRAGMA/Quick-Hub/master/build/icon.ico"
+      "iconUrl": "https://raw.githubusercontent.com/initPRAGMA/Limitless-Hub/master/build/icon.ico"
     }
   },
   "devDependencies": {
