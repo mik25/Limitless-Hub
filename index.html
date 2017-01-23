@@ -82,7 +82,7 @@
 				</md-tabs>
 			</md-toolbar>
 
-			<md-content flex layout-fill style="background-color:#e2e2e2;padding:10px">
+			<md-content flex layout-fill style="background-color:#e2e2e2">
 				
 				<ng-switch on="data.selectedIndex" class="tabpanel-container" style="background-color:#e2e2e2">
 					
@@ -93,20 +93,20 @@
 
 							<md-grid-tile ng-repeat="movie in movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
 								<img ng-src="{{movie.poster}}" class="md-card-image" alt="{{movie.name}}" style="width:100%;height:100%">
-								<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;watchUrl('false', movie)"></md-grid-tile-footer>
+								<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;loadShow(movie)"></md-grid-tile-footer>
 							</md-grid-tile>
 
 						</md-grid-list>
 
 					</div>
 
-					<div role="tabpanel" id="tv-page" ng-controller="tv-page" aria-labelledby="tab2" ng-switch-when="1" md-swipe-left="next()" md-swipe-right="previous()" layout-padding style="padding-top:0">
+					<div role="tabpanel" id="tv-page" ng-controller="tv-page" aria-labelledby="tab2" ng-switch-when="1" md-swipe-left="next()" md-swipe-right="previous()" layout-padding style="padding:10px;padding-top:0">
 
 						<!-- List all Shows -->
 						<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="8px">
 
 							<md-grid-tile ng-repeat="show in shows | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-								<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;watchUrl('false', show)"></md-grid-tile-footer>
+								<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;loadShow(show)"></md-grid-tile-footer>
 								<img ng-src="{{show.poster}}" class="md-card-image" alt="{{show.name}}" style="width:100%;height:100%">
 							</md-grid-tile>
 
@@ -114,13 +114,13 @@
 
 					</div>
 
-					<div role="tabpanel" id="anime-page" ng-controller="anime-page" aria-labelledby="tab3" ng-switch-when="2" md-swipe-left="next()" md-swipe-right="previous()" layout-padding style="padding-top:0">
+					<div role="tabpanel" id="anime-page" ng-controller="anime-page" aria-labelledby="tab3" ng-switch-when="2" md-swipe-left="next()" md-swipe-right="previous()" layout-padding style="padding:10px;padding-top:0">
 
 						<!-- List all Anime -->
 						<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="8px">
 
 							<md-grid-tile ng-repeat="anim in anime | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-								<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;watchUrl('false', anim)"></md-grid-tile-footer>
+								<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;loadShow(anim)"></md-grid-tile-footer>
 								<img ng-src="{{anim.poster}}" class="md-card-image" alt="{{anim.name}}" style="width:100%;height:100%">
 							</md-grid-tile>
 
@@ -128,35 +128,50 @@
 
 					</div>
 
-					<div role="tabpanel" id="watch-page" aria-labelledby="tab3" ng-switch-when="3" md-swipe-left="next()" md-swipe-right="previous()" layout-align="center center" layout-margin>
+					<div role="tabpanel" id="watch-page" aria-labelledby="tab3" ng-switch-when="3" md-swipe-left="next()" md-swipe-right="previous()" layout-align="center center">
 
-						<!-- Video Player - Hidden by default -->
-						<video id="{{show_name}}" class="video-js vjs-default-skin vjs-hidden" autoplay controls preload="auto" width="640" height="360" data-setup='{ "plugins": { "videoJsResolutionSwitcher": {"default": "720p", "dynamicLabel": true} } }' style="margin:0 auto">
-								<p class="vjs-no-js">
-									To view this video please enable JavaScript, and consider upgrading to a web browser that
-									<a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-								</p>
-						</video>
-
-						<!-- Divider for the Video to the Quality Buttons/Episode Images -->
-						<md-divider id="1st-divider" class="hidden"></md-divider>
-
-						<!-- List all the Quality Buttons -->
-						<md-button class="md-raised" ng-click="data.selectedIndex=3;watchUrl('true', null, link.link)" ng-repeat="link in show.dl_links" ng-if="show.dl_links[0].quality">{{link.quality}}</md-button>
+						<style>
+							.MoviePanel {
+								height:488px;
+							}
+							.TvPanel {
+								height:544px
+							}
+						</style>
+						<div ng-class="show.seasons[0].episodes ? 'TvPanel' : 'MoviePanel'" style='position:relative;background-image:linear-gradient(to bottom, rgba(226,226,226,0.6) 0%,rgba(226,226,226,0.6) 100%),url("{{backdrop}}");text-align:center;background-size:100%'>
+							<div style="padding-top:74px">
+								<img ng-src="{{poster}}" class="md-whiteframe-5dp" style="float:left;margin-left:44px;display:inline-block;width:auto;height:340px">
+								<!-- Video Player - Hidden by default -->
+								<span style="display:inline-block">
+									<video id="{{show_name}}" class="video-js vjs-default-skin md-whiteframe-3dp" autoplay controls preload="auto" width="605" height="340" data-setup='{ "plugins": { "videoJsResolutionSwitcher": {"default": "720p", "dynamicLabel": true} } }' style="margin:0 auto">
+										<p class="vjs-no-js">
+											To view this video please enable JavaScript, and consider upgrading to a web browser that
+											<a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+										</p>
+									</video>
+								</span>
+							</div>
+							<div class="gradient-2" ng-if="show.seasons[0].episodes"></div>
+							<span ng-if="show.dl_links"><span ng-init="loadSrc(show.dl_links)"></span></span>
+						</div>
 
 						<!-- List all the episodes for the selected show -->
-						<div ng-repeat="season in show.seasons" ng-if="show.seasons[0].episodes">
+						<div style="padding:20px" ng-if="show.seasons[0].episodes">
 
-							<h3>Season {{season.num}}</h3>
-							<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="16:9" md-gutter="8px">
+							<div ng-repeat="season in show.seasons">
 
-								<md-grid-tile ng-repeat="episode in season.episodes" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-									<md-grid-tile-header style="background:rgba(0,0,0,0);height:100%" ng-click="data.selectedIndex=3;watchUrl('true', null, episode)"></md-grid-tile-header>
-									<md-grid-tile-footer style="background:linear-gradient(to bottom,rgba(40,44,52,0),rgba(40,44,52,0.8));height:26px" ng-click="data.selectedIndex=3;watchUrl('true', null, episode)"><h3 style="text-shadow:1px 1px 2px rgba(0,0,0,0.5)">#{{episode.num}}</h3></md-grid-tile-footer>
-									<img ng-src="{{episode.screenshot}}" class="md-card-image" alt="{{show.name}}" style="width:100%;height:100%">
-								</md-grid-tile>
+								<h3>Season {{season.num}}</h3>
+								<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="16:9" md-gutter="8px">
 
-							</md-grid-list>
+									<md-grid-tile ng-repeat="episode in season.episodes" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+										<md-grid-tile-header style="background:rgba(0,0,0,0);height:100%" ng-click="data.selectedIndex=3;loadSrc(episode)"></md-grid-tile-header>
+										<md-grid-tile-footer style="background:linear-gradient(to bottom,rgba(40,44,52,0),rgba(40,44,52,0.8));height:26px" ng-click="data.selectedIndex=3;loadSrc(episode)"><h3 style="text-shadow:1px 1px 2px rgba(0,0,0,0.5)">#{{episode.num}}</h3></md-grid-tile-footer>
+										<img ng-src="{{episode.screenshot}}" class="md-card-image" alt="{{show.name}}" style="width:100%;height:100%">
+									</md-grid-tile>
+
+								</md-grid-list>
+
+							</div>
 
 						</div>
 
