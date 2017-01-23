@@ -1,0 +1,44 @@
+<html>
+<head>
+
+	<!-- MaterialDesignIcons -->
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+	<!-- Roboto Font -->
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+	<!-- Custom Styling -->
+	<style>
+	.container {
+	    position: absolute;
+	    top: 50%;
+	    left: 50%;
+	    transform: translateX(-50%) translateY(-50%);
+	}
+	</style>
+
+</head>
+
+<body style="-webkit-app-region:drag;overflow:hidden">
+
+	<div class="container">
+		<a style="font-family: 'Roboto', sans-serif;">Updating...</a>
+	</div>
+	<div id="siri-container" style="height:40px;width:100%;position:absolute;bottom:-20;left:-5"></div>
+
+	<script src="js/siriwave.js"></script>
+	<script>
+	var SW9 = new SiriWave9({
+		width: 430,
+		height: 40,
+		speed: 0.2,
+		amplitude: 1,
+		container: document.getElementById('siri-container'),
+		autostart: true,
+		cover: true,
+	});
+	</script>
+
+</body>
+
+</html>
