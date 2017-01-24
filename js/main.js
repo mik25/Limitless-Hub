@@ -25,7 +25,7 @@
         rng += possible.charAt(Math.floor(Math.random() * possible.length));
 
       $scope.show = show;
-      $scope.show_name = show.name.split(' ').join('') + "-" + rng;
+      $scope.show_name = show.name.split(' ').join('').split(' ').join('') + "-" + rng;
       $scope.poster = show.poster;
       $scope.backdrop = show.backdrop;
 
@@ -93,9 +93,9 @@
 
       // Sort the JSON alphabetically
       $scope.movies.sort(function(a, b){
-        if(a.name.toUpperCase() < b.name.toUpperCase()) return -1;
-        if(a.name.toUpperCase() > b.name.toUpperCase()) return 1;
-        return 0;
+        return a.group && b.group
+        ? a.group.localeCompare(b.group) || a.groupno - b.groupno
+        : (a.group || a.name).localeCompare(b.group || b.name);
       });
 
       // Stringify the JSON and get its Length
