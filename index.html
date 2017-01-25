@@ -173,8 +173,9 @@
 						<!-- List all the episodes for the selected show -->
 						<div style="padding:20px" ng-if="show.seasons[0].episodes">
 
-							<h3>Season {{season.num}}</h3>
-							<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="16:9" md-gutter="8px">
+							<span ng-repeat="season in show.seasons">
+								<h3>Season {{season.num}}</h3>
+								<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="16:9" md-gutter="8px">
 
 									<md-grid-tile ng-repeat="episode in season.episodes" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
 										<md-grid-tile-header style="background:rgba(0,0,0,0);height:100%" ng-click="data.selectedIndex=3;loadShow(episode)"></md-grid-tile-header>
@@ -182,7 +183,8 @@
 										<img ng-src="{{episode.screenshot}}" class="md-card-image" alt="{{show.name}}" style="width:100%;height:100%">
 									</md-grid-tile>
 
-							</md-grid-list>
+								</md-grid-list>
+							</span>
 
 						</div>
 
