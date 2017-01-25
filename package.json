@@ -1,7 +1,7 @@
 {
   "name": "Limitless-Hub",
   "productname": "Limitless-Hub",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Quick & Easy Movie, TV Show and Anime Streaming Hub!",
   "author": "initPRAGMA <initializingpragma@gmail.com> (https://github.com/initPRAGMA/Limitless-Hub)",
   "email": "initializingpragma@gmail.com",
@@ -33,6 +33,8 @@
     "electron-builder": "^11.4.4"
   },
   "dependencies": {
-    "electron-auto-updater": "^1.0.0"
+    "electron-auto-updater": "^1.0.0",
+    "electron-is-dev": "^0.1.2",
+    "webtorrent": "^0.98.3"
   }
 }

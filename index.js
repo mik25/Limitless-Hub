@@ -2,7 +2,7 @@ const {app, BrowserWindow, shell, dialog} = require('electron')
 const {autoUpdater} = require('electron-auto-updater')
 const path = require('path')
 const url = require('url')
-const ready = "false"
+const isDev = require('electron-is-dev');
 
 let mainwin
 let updating
@@ -28,8 +28,12 @@ function createwindow () {
   mainwin.loadURL(url.format({ pathname: path.join(__dirname, 'index.html'), protocol: 'file:', slashes: true }))
   updating = new BrowserWindow({width: 430, height: 220, minWidth: 430, minHeight: 220, frame: false, titleBarStyle: 'hidden', show: false})
   updating.loadURL(url.format({ pathname: path.join(__dirname, 'updating.html'), protocol: 'file:', slashes: true }))
-
-  autoUpdater.checkForUpdates()
+ 
+  if(isDev) {
+    mainwin.show()
+  } else {
+    autoUpdater.checkForUpdates()
+  }
   
   //mainwin.webContents.openDevTools()
 

@@ -1,7 +1,7 @@
 (function($){
 
   var titledbApp = angular.module('titledbApp', ['ngMaterial', 'ngCookies']);
-    
+
   titledbApp.controller('TitleListController', ['$mdToast', '$mdDialog', '$cookieStore', '$scope', '$http', function($mdToast, $mdDialog, $cookieStore, $scope, $http) {
 
   	$scope.watching = false;
@@ -17,7 +17,7 @@
       return null;
     }
 
-    $scope.loadShow = function(show) {
+    $scope.initShow = function(show) {
 
       var rng = "";
       var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -31,44 +31,41 @@
 
     };
 
-    $scope.loadSrc = function(json) {
-      $scope.vid_obj = videojs($scope.show_name, {
-        controls: true,
-        plugins: {
-          videoJsResolutionSwitcher: {
-            default: '720',
-            dynamicLabel: true
-          }
-        }
+    $scope.loadMovie = function(json) {
+      $http.get('https://yts.ag/api/v2/list_movies.json?query_term='+json.info.imdb).
+      success(function(data, status, headers, config) {
+        $scope.links = JSON.parse(JSON.stringify(data));
+        angular.element(document.getElementById('createPlayer')).append('client&&client.destroy();var client=new WebTorrent,links='+JSON.stringify(data)+';client.add(links.data.movies[0].torrents[0].url,function(a){console.log("Client is downloading:",a.infoHash),a.files.forEach(function(a){a.appendTo("#watchPlayer");})});');
       });
-      $scope.vid_obj.ready(function() {
-        $scope.src_array = [
-          {
-            src: json._480p,
-            type: json.type,
-            label: '480p',
-          res: 480
-          },
-          {
-            src: json._720p,
-            type: json.type,
-            label: '720p',
-          res: 720
-          },
-          {
-            src: json._1080p,
-            type: json.type,
-            label: '1080p',
-          res: 1080
-          }
-        ];
-        if(!json._480p) { $scope.src_array.splice($scope.functiontofindIndexByKeyValue($scope.src_array, 'label', '480p'), 1) };
-        if(!json._720p) { $scope.src_array.splice($scope.functiontofindIndexByKeyValue($scope.src_array, 'label', '720p'), 1) };
-        if(!json._1080p) { $scope.src_array.splice($scope.functiontofindIndexByKeyValue($scope.src_array, 'label', '1080p'), 1) };
+    };
 
-        $scope.vid_obj.updateSrc($scope.src_array);
-        $scope.vid_obj.load();
-      });
+    $scope.loadShow = function(json) {
+      $scope.src_array = [
+        {
+          src: json._480p,
+          type: json.type,
+          label: '480p',
+        res: 480
+        },
+        {
+          src: json._720p,
+          type: json.type,
+          label: '720p',
+        res: 720
+        },
+        {
+          src: json._1080p,
+          type: json.type,
+          label: '1080p',
+        res: 1080
+        }
+      ];
+      if(!json._480p) { $scope.src_array.splice($scope.functiontofindIndexByKeyValue($scope.src_array, 'label', '480p'), 1) };
+      if(!json._720p) { $scope.src_array.splice($scope.functiontofindIndexByKeyValue($scope.src_array, 'label', '720p'), 1) };
+      if(!json._1080p) { $scope.src_array.splice($scope.functiontofindIndexByKeyValue($scope.src_array, 'label', '1080p'), 1) };
+      var player = document.getElementById('player');
+      player.src=json._720p;
+      player.load();
     };
 
     $scope.selectedtab = 0;
