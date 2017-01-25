@@ -193,7 +193,7 @@
 						<!-- List all the episodes for the selected show -->
 						<div style="padding:20px" ng-if="!show.seasons[0].episodes">
 
-							<div ng-repeat="movie in show|limitTo:6">
+							<div ng-repeat="movie in movies|limitTo:6">
 
 								<h3>Newest Movies</h3>
 								<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="8px">
