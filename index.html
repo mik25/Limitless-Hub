@@ -88,17 +88,56 @@
 				
 				<ng-switch on="data.selectedIndex" class="tabpanel-container" style="background-color:#e2e2e2">
 					
-					<div role="tabpanel" id="movies-page" aria-labelledby="tab1" ng-switch-when="0" md-swipe-left="next()" md-swipe-right="previous()" layout-padding style="margin:12;padding-top:0">
+					<div role="tabpanel" id="movies-page" aria-labelledby="tab1" ng-switch-when="0" md-swipe-left="next()" md-swipe-right="previous()" layout-padding>
 
-						<!-- List all Movies -->
-						<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="8px">
+						<md-tabs md-dynamic-height md-border-bottom style="padding:0">
 
-							<md-grid-tile ng-repeat="movie in movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-								<img ng-src="{{movie.poster}}" class="md-card-image" alt="{{movie.name}}" style="width:100%;height:100%">
-								<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;initShow(movie)"></md-grid-tile-footer>
-							</md-grid-tile>
+						  	<md-tab label="Newest">
+								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
+									
+									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
 
-						</md-grid-list>
+										<md-grid-tile ng-repeat="movie in movies.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+											<img ng-src="{{movie.large_cover_image}}" class="md-card-image" style="width:100%;height:100%">
+											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;initShow(movie)"></md-grid-tile-footer>
+										</md-grid-tile>
+
+									</md-grid-list>
+
+								</md-content>
+						  	</md-tab>
+
+						  	<md-tab label="Action">
+								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
+								  
+									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
+
+										<md-grid-tile ng-repeat="movie in movies.action.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+											<img ng-src="{{movie.large_cover_image}}" class="md-card-image" style="width:100%;height:100%">
+											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;initShow(movie)"></md-grid-tile-footer>
+										</md-grid-tile>
+
+									</md-grid-list>
+
+								</md-content>
+						  	</md-tab>
+
+						  	<md-tab label="Comedy">
+								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
+								  
+									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
+
+										<md-grid-tile ng-repeat="movie in movies.comedy.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+											<img ng-src="{{movie.large_cover_image}}" class="md-card-image" style="width:100%;height:100%">
+											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;initShow(movie)"></md-grid-tile-footer>
+										</md-grid-tile>
+
+									</md-grid-list>
+
+								</md-content>
+						  	</md-tab>
+
+						</md-tabs>
 
 					</div>
 
@@ -109,7 +148,7 @@
 
 							<md-grid-tile ng-repeat="show in shows | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
 								<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;initShow(show)"></md-grid-tile-footer>
-								<img ng-src="{{show.poster}}" class="md-card-image" alt="{{show.name}}" style="width:100%;height:100%">
+								<img ng-src="{{show.poster}}" class="md-card-image" style="width:100%;height:100%">
 							</md-grid-tile>
 
 						</md-grid-list>
@@ -195,10 +234,10 @@
 							<h3>Newest Movies</h3>
 							<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="8px">
 
-								<md-grid-tile ng-repeat="movie in movies|limitTo:6" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+								<md-grid-tile ng-repeat="movie in movies.suggestions.data.movies|limitTo:12" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
 									<md-grid-tile-header style="background:rgba(0,0,0,0);height:100%" ng-click="data.selectedIndex=3;loadMovie(movie)"></md-grid-tile-header>
 									<md-grid-tile-footer style="background:linear-gradient(to bottom,rgba(40,44,52,0),rgba(40,44,52,0.8));height:26px" ng-click="data.selectedIndex=3;loadMovie(movie)"></md-grid-tile-footer>
-									<img ng-src="{{movie.poster}}" class="md-card-image" style="width:100%;height:100%">
+									<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
 								</md-grid-tile>
 
 							</md-grid-list>

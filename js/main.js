@@ -5,6 +5,10 @@
   titledbApp.controller('TitleListController', ['$mdToast', '$mdDialog', '$cookieStore', '$scope', '$http', function($mdToast, $mdDialog, $cookieStore, $scope, $http) {
 
   	$scope.watching = false;
+    $scope.movies = "";
+    $scope.movies.suggestions = "";
+    $scope.movies.action = "";
+    $scope.movies.comedy = "";
     $scope.show = "";
     $scope.show_name = "";
     $scope.backdrop = "";
@@ -25,18 +29,27 @@
         rng += possible.charAt(Math.floor(Math.random() * possible.length));
 
       $scope.show = show;
-      $scope.show_name = show.name.split(' ').join('').split(' ').join('') + "-" + rng;
-      $scope.poster = show.poster;
-      $scope.backdrop = show.backdrop;
+      if(show.name) {
+        $scope.show_name = show.name.split(' ').join('').split(' ').join('') + "-" + rng;
+        $scope.poster = show.poster;
+        $scope.backdrop = show.backdrop;
+      } else {
+        $scope.show_name = show.title_english.split(' ').join('').split(' ').join('') + "-" + rng;
+        $scope.poster = show.large_cover_image;
+        $scope.backdrop = show.background_image_original;
+        $scope.show_id = show.id;
+      };
+
+      $http.get('https://yts.ag/api/v2/movie_suggestions.json?limit=12&movie_id='+$scope.show_id).
+      success(function(data, status, headers, config) {
+        $scope.movies.suggestions = JSON.parse(JSON.stringify(data));
+      });
 
     };
 
     $scope.loadMovie = function(json) {
-      $http.get('https://yts.ag/api/v2/list_movies.json?query_term='+json.info.imdb).
-      success(function(data, status, headers, config) {
-        $scope.links = JSON.parse(JSON.stringify(data));
-        angular.element(document.getElementById('createPlayer')).append('client&&client.destroy();var client=new WebTorrent,links='+JSON.stringify(data)+';client.add(links.data.movies[0].torrents[0].url,function(a){console.log("Client is downloading:",a.infoHash),a.files.forEach(function(a){a.appendTo("#watchPlayer");})});');
-      });
+      var js = 'var client=new WebTorrent;client.add(\"'+json.torrents[0].url.replace('\\', '')+'\",function(a){console.log("Client is downloading:",a.infoHash),a.files.forEach(function(a){a.appendTo("#watchPlayer")})});';
+      angular.element(document.getElementById('createPlayer')).append(js);
     };
 
     $scope.loadShow = function(json) {
@@ -82,33 +95,19 @@
       $cookieStore.put('leak', $scope.settings.leak);
     };
 
-    $http.get('https://raw.githubusercontent.com/initPRAGMA/Quick-Hub-Server/master/movies.json').
+    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50').
     success(function(data, status, headers, config) {
+      $scope.movies = JSON.parse(JSON.stringify(data));
+    });
 
-      // Parse the JSON
-      $scope.movies = data;
+    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Action').
+    success(function(data, status, headers, config) {
+      $scope.movies.action = JSON.parse(JSON.stringify(data));
+    });
 
-      // Sort the JSON alphabetically
-      $scope.movies.sort(function(a, b){
-        return a.group && b.group
-        ? a.group.localeCompare(b.group) || a.groupno - b.groupno
-        : (a.group || a.name).localeCompare(b.group || b.name);
-      });
-
-      // Stringify the JSON and get its Length
-      var json = JSON.stringify($scope.movies);
-
-      // Remove double back slashes
-      json.replace('\\', '');
-
-      //Create the Titles Scope from the finished JSON
-      $scope.movies = JSON.parse(json);
-
-    }).
-    error(function(error){
-
-      console.log('Error' + error);
-
+    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Comedy').
+    success(function(data, status, headers, config) {
+      $scope.movies.comedy = JSON.parse(JSON.stringify(data));
     });
 
   }]);
