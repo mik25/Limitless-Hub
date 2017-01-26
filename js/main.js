@@ -145,7 +145,7 @@
     }).error(function(){console.log("Failed to load Mystery Movies!")});
     
     $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Romance').success(function(data, status, headers, config) {
-      $scope.romance.mystery = JSON.parse(JSON.stringify(data));
+      $scope.movies.romance = JSON.parse(JSON.stringify(data));
     }).error(function(){console.log("Failed to load Romance Movies!")});
 
     $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Sci-Fi').success(function(data, status, headers, config) {
