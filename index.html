@@ -98,7 +98,7 @@
 									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
 
 										<md-grid-tile ng-repeat="movie in movies.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-											<img ng-src="{{movie.large_cover_image}}" class="md-card-image" style="width:100%;height:100%">
+											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
 											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;initShow(movie)"></md-grid-tile-footer>
 										</md-grid-tile>
 
@@ -113,7 +113,37 @@
 									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
 
 										<md-grid-tile ng-repeat="movie in movies.action.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-											<img ng-src="{{movie.large_cover_image}}" class="md-card-image" style="width:100%;height:100%">
+											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
+											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;initShow(movie)"></md-grid-tile-footer>
+										</md-grid-tile>
+
+									</md-grid-list>
+
+								</md-content>
+						  	</md-tab>
+
+						  	<md-tab label="Adventure">
+								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
+								  
+									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
+
+										<md-grid-tile ng-repeat="movie in movies.adventure.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
+											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;initShow(movie)"></md-grid-tile-footer>
+										</md-grid-tile>
+
+									</md-grid-list>
+
+								</md-content>
+						  	</md-tab>
+
+						  	<md-tab label="Animation">
+								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
+								  
+									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
+
+										<md-grid-tile ng-repeat="movie in movies.animation.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
 											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;initShow(movie)"></md-grid-tile-footer>
 										</md-grid-tile>
 
@@ -128,7 +158,127 @@
 									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
 
 										<md-grid-tile ng-repeat="movie in movies.comedy.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-											<img ng-src="{{movie.large_cover_image}}" class="md-card-image" style="width:100%;height:100%">
+											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
+											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;initShow(movie)"></md-grid-tile-footer>
+										</md-grid-tile>
+
+									</md-grid-list>
+
+								</md-content>
+						  	</md-tab>
+
+						  	<md-tab label="Crime">
+								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
+								  
+									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
+
+										<md-grid-tile ng-repeat="movie in movies.crime.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
+											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;initShow(movie)"></md-grid-tile-footer>
+										</md-grid-tile>
+
+									</md-grid-list>
+
+								</md-content>
+						  	</md-tab>
+
+						  	<md-tab label="Drama">
+								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
+								  
+									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
+
+										<md-grid-tile ng-repeat="movie in movies.drama.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
+											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;initShow(movie)"></md-grid-tile-footer>
+										</md-grid-tile>
+
+									</md-grid-list>
+
+								</md-content>
+						  	</md-tab>
+
+						  	<md-tab label="Family">
+								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
+								  
+									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
+
+										<md-grid-tile ng-repeat="movie in movies.family.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
+											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;initShow(movie)"></md-grid-tile-footer>
+										</md-grid-tile>
+
+									</md-grid-list>
+
+								</md-content>
+						  	</md-tab>
+
+						  	<md-tab label="Fantasy">
+								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
+								  
+									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
+
+										<md-grid-tile ng-repeat="movie in movies.fantasy.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
+											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;initShow(movie)"></md-grid-tile-footer>
+										</md-grid-tile>
+
+									</md-grid-list>
+
+								</md-content>
+						  	</md-tab>
+
+						  	<md-tab label="Horror">
+								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
+								  
+									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
+
+										<md-grid-tile ng-repeat="movie in movies.horror.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
+											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;initShow(movie)"></md-grid-tile-footer>
+										</md-grid-tile>
+
+									</md-grid-list>
+
+								</md-content>
+						  	</md-tab>
+
+						  	<md-tab label="Mystery">
+								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
+								  
+									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
+
+										<md-grid-tile ng-repeat="movie in movies.mystery.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
+											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;initShow(movie)"></md-grid-tile-footer>
+										</md-grid-tile>
+
+									</md-grid-list>
+
+								</md-content>
+						  	</md-tab>
+
+						  	<md-tab label="Romance">
+								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
+								  
+									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
+
+										<md-grid-tile ng-repeat="movie in movies.romance.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
+											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;initShow(movie)"></md-grid-tile-footer>
+										</md-grid-tile>
+
+									</md-grid-list>
+
+								</md-content>
+						  	</md-tab>
+
+						  	<md-tab label="Sci-Fi">
+								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
+								  
+									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
+
+										<md-grid-tile ng-repeat="movie in movies.scifi.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
 											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="data.selectedIndex=3;initShow(movie)"></md-grid-tile-footer>
 										</md-grid-tile>
 
@@ -197,13 +347,12 @@
 							display:none
 						}
 						</style>
-						<div ng-class="show.seasons[0].episodes ? 'TvPanel' : 'MoviePanel'" style='position:relative;background-image:linear-gradient(to bottom, rgba(226,226,226,0.6) 0%,rgba(226,226,226,0.6) 100%),url("{{backdrop}}");text-align:center;background-size:100%'>
-							<div style="padding-top:74px">
-								<img ng-src="{{poster}}" class="md-whiteframe-5dp" style="float:left;margin-left:44px;display:inline-block;width:auto;height:340px">
+						<div ng-class="show.seasons[0].episodes ? 'TvPanel' : 'MoviePanel'" style='position:relative;background-image:linear-gradient(to bottom, rgba(226,226,226,0.6) 0%,rgba(226,226,226,0.6) 100%),url("{{backdrop}}");text-align:center;background-size:cover;background-repeat:no-repeat'>
+							<div style="padding-top:74px" id="playerContainer">
+								<img ng-src="{{poster}}" ng-show="poster != null" class="md-whiteframe-5dp" style="float:left;margin-left:44px;display:inline-block;width:auto;height:340px">
 								<span ng-init="loadMovie(show)" ng-if="!show.seasons[0].episodes"></span>
 								<span ng-init="loadShow(show)" ng-if="show.seasons[0].episodes"></span>
 								<span id="watchPlayer">
-									<script id="createPlayer"></script>
 									<video id="player" autoplay controls src="null" ng-if="show.seasons[0].episodes"></video>
 								</span>
 							</div>
@@ -218,8 +367,8 @@
 								<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="16:9" md-gutter="8px">
 
 									<md-grid-tile ng-repeat="episode in season.episodes" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-										<md-grid-tile-header style="background:rgba(0,0,0,0);height:100%" ng-click="data.selectedIndex=3;loadShow(episode)"></md-grid-tile-header>
-										<md-grid-tile-footer style="background:linear-gradient(to bottom,rgba(40,44,52,0),rgba(40,44,52,0.8));height:26px" ng-click="data.selectedIndex=3;loadShow(episode)"><h3 style="text-shadow:1px 1px 2px rgba(0,0,0,0.5)">#{{episode.num}}</h3></md-grid-tile-footer>
+										<md-grid-tile-header style="background:rgba(0,0,0,0);height:100%" ng-click="loadShow(episode)"></md-grid-tile-header>
+										<md-grid-tile-footer style="background:linear-gradient(to bottom,rgba(40,44,52,0),rgba(40,44,52,0.8));height:26px" ng-click="loadShow(episode)"><h3 style="text-shadow:1px 1px 2px rgba(0,0,0,0.5)">#{{episode.num}}</h3></md-grid-tile-footer>
 										<img ng-src="{{episode.screenshot}}" class="md-card-image" alt="{{show.name}}" style="width:100%;height:100%">
 									</md-grid-tile>
 
@@ -231,12 +380,12 @@
 						<!-- List all the episodes for the selected show -->
 						<div style="padding:20px" ng-if="!show.seasons[0].episodes">
 
-							<h3>Newest Movies</h3>
+							<h3>Suggested Movies</h3>
 							<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="8px">
 
 								<md-grid-tile ng-repeat="movie in movies.suggestions.data.movies|limitTo:12" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-									<md-grid-tile-header style="background:rgba(0,0,0,0);height:100%" ng-click="data.selectedIndex=3;loadMovie(movie)"></md-grid-tile-header>
-									<md-grid-tile-footer style="background:linear-gradient(to bottom,rgba(40,44,52,0),rgba(40,44,52,0.8));height:26px" ng-click="data.selectedIndex=3;loadMovie(movie)"></md-grid-tile-footer>
+									<md-grid-tile-header style="background:rgba(0,0,0,0);height:100%" ng-click="initShow(movie);loadMovie(movie)"></md-grid-tile-header>
+									<md-grid-tile-footer style="background:linear-gradient(to bottom,rgba(40,44,52,0),rgba(40,44,52,0.8));height:26px" ng-click="initShow(movie);loadMovie(movie)"></md-grid-tile-footer>
 									<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
 								</md-grid-tile>
 
