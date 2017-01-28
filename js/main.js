@@ -1,12 +1,13 @@
 (function($){
 
-  var titledbApp = angular.module('titledbApp', ['ngMaterial', 'ngCookies']);
+  var titledbApp = angular.module('titledbApp', ['ngMaterial', 'ngCookies', 'angular-inview']);
   var eztvapi = require('eztvapi');
   var eztv = eztvapi({apiLimitRequests:10,apiLimitInterval:60000});
 
   titledbApp.controller('TitleListController', ['$cookieStore', '$scope', '$http', function($cookieStore, $scope, $http) {
 
     $scope.selectedIndex = 0;
+    $scope.page = 1;
 
     $scope.initMovie = function(movie) {
       $scope.show = movie;
@@ -43,6 +44,25 @@
       });
     };
 
+    $scope.moreMovies = function (actuallyIncrease, category) {
+      if (actuallyIncrease) {
+        $scope.page++
+        if(category == 'newest') { var url = 'https://yts.ag/api/v2/list_movies.json?limit=50&page='+$scope.page } else {
+          var url = 'https://yts.ag/api/v2/list_movies.json?limit=50&page='+$scope.page+'&genre='+category;
+        };
+        $http.get(url).
+        success(function(data, status, headers, config) {
+          var temp = [];
+          if(category=='newest'){temp=$scope.movies} else {
+            eval("temp = $scope.movies."+category.toLowerCase()+";");
+          }
+          temp.data.movies = temp.data.movies.concat(data.data.movies);
+          array = temp;
+          eval("$scope.movies."+category.toLowerCase()+" = temp;");
+        }).error(function(){console.log("Failed to load Featured Movies!")});
+      }
+    };
+
     $scope.loadTVShow = function(episode) {
       angular.element(document.getElementById("watchPlayer")).empty();
       var client=new WebTorrent;
@@ -66,7 +86,7 @@
 
     $http.get('https://yts.ag/api/v2/list_movies.json?limit=50').
     success(function(data, status, headers, config) {
-      $scope.movies = JSON.parse(JSON.stringify(data));
+      $scope.movies = data;
     }).error(function(){console.log("Failed to load Featured Movies!")});
 
     $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Action').success(function(data, status, headers, config) {

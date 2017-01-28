@@ -35,7 +35,7 @@ function createwindow () {
     autoUpdater.checkForUpdates()
   }
   
-  //mainwin.webContents.openDevTools()
+  mainwin.webContents.openDevTools()
 
   mainwin.on('closed', () => {
     app.quit()
