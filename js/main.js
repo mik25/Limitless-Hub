@@ -1,91 +1,56 @@
 (function($){
 
   var titledbApp = angular.module('titledbApp', ['ngMaterial', 'ngCookies']);
+  var eztvapi = require('eztvapi');
+  var eztv = eztvapi({apiLimitRequests:10,apiLimitInterval:60000});
 
-  titledbApp.controller('TitleListController', ['$mdToast', '$mdDialog', '$cookieStore', '$scope', '$http', function($mdToast, $mdDialog, $cookieStore, $scope, $http) {
+  titledbApp.controller('TitleListController', ['$cookieStore', '$scope', '$http', function($cookieStore, $scope, $http) {
 
-  	$scope.watching = false;
-    $scope.movies = "";
-    $scope.movies.suggestions = "";
-    $scope.movies.action = "";
-    $scope.movies.comedy = "";
-    $scope.show = "";
-    $scope.show_name = "";
-    $scope.backdrop = "";
-    $scope.poster = "";
+    $scope.selectedIndex = 0;
 
-    $scope.functiontofindIndexByKeyValue = function(arraytosearch, key, valuetosearch) {
-      for (var i = 0; i < arraytosearch.length; i++) {
-        if (arraytosearch[i][key] == valuetosearch) { return i; }
-      }
-      return null;
-    }
-
-    $scope.initShow = function(show) {
-
-      var rng = "";
-      var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-      for( var i=0; i < 10; i++ )
-        rng += possible.charAt(Math.floor(Math.random() * possible.length));
-
-      $scope.show = show;
-      if(!show.small_cover_image) {
-        $scope.show_name = show.name.split(' ').join('').split(' ').join('') + "-" + rng;
-        $scope.poster = show.poster;
-        $scope.backdrop = show.backdrop;
-      } else {
-        $scope.show_name = show.title_english.split(' ').join('').split(' ').join('') + "-" + rng;
-        $scope.poster = show.medium_cover_image;
-        $scope.backdrop = show.background_image_original;
-        $scope.show_id = show.id;
-      };
+    $scope.initMovie = function(movie) {
+      $scope.show = movie;
+      $scope.poster = movie.medium_cover_image;
+      $scope.backdrop = movie.background_image_original;
+      $scope.show_id = movie.id;
 
       $http.get('https://yts.ag/api/v2/movie_suggestions.json?limit=12&movie_id='+$scope.show_id).
       success(function(data, status, headers, config) {
         $scope.movies.suggestions = JSON.parse(JSON.stringify(data));
       });
-
+      $scope.selectedIndex=3;
     };
 
-    $scope.loadMovie = function(json) {
+    $scope.loadMovie = function(movie) {
       angular.element(document.getElementById("watchPlayer")).empty();
       var client=new WebTorrent;
-      client.add(json.torrents[0].url,function(a){
+      client.add(movie.torrents[0].url,function(a){
         console.log("Client is downloading: " + a.infoHash);
         a.files.forEach(function(a){angular.element(a.appendTo("#watchPlayer"))});
       });
     };
 
-    $scope.loadShow = function(json) {
-      $scope.src_array = [
-        {
-          src: json._480p,
-          type: json.type,
-          label: '480p',
-        res: 480
-        },
-        {
-          src: json._720p,
-          type: json.type,
-          label: '720p',
-        res: 720
-        },
-        {
-          src: json._1080p,
-          type: json.type,
-          label: '1080p',
-        res: 1080
+    $scope.initTVShow = function(show) {
+      $scope.show = show;
+      $scope.poster = show.images.poster;
+      $scope.backdrop = show.images.poster;
+      $scope.seasons = [];
+
+      eztv.getShow(show.imdb_id, function (err, show) {
+        for (let i = 0; i < 11 || function(){$scope.selectedIndex=3}(); i++) {
+          $scope.seasons[i] = show.episodes.filter((episode) => episode.season === i);
         }
-      ];
-      if(!json._480p) { $scope.src_array.splice($scope.functiontofindIndexByKeyValue($scope.src_array, 'label', '480p'), 1) };
-      if(!json._720p) { $scope.src_array.splice($scope.functiontofindIndexByKeyValue($scope.src_array, 'label', '720p'), 1) };
-      if(!json._1080p) { $scope.src_array.splice($scope.functiontofindIndexByKeyValue($scope.src_array, 'label', '1080p'), 1) };
-      var player = document.getElementById('player');
-      player.src=json._720p;
-      player.load();
+      });
     };
 
-    $scope.selectedtab = 0;
+    $scope.loadTVShow = function(episode) {
+      angular.element(document.getElementById("watchPlayer")).empty();
+      var client=new WebTorrent;
+      client.add(episode.torrents["480p"].url,function(a){
+        console.log("Client is downloading: " + a.infoHash);
+        a.files.forEach(function(a){angular.element(a.appendTo("#watchPlayer"))});
+      });
+    };
 
     $scope.settings={eur:'',usa:'',leak:''};
     if($cookieStore.get('eur') != undefined) { $scope.settings.eur = $cookieStore.get('eur'); }
@@ -154,43 +119,12 @@
 
   }]);
 
-  titledbApp.controller('Dropdown', ['$scope', function($scope) {
-
-    this.openMenu = function($mdOpenMenu, ev) {
-      $mdOpenMenu(ev);
-    };
-
-  }]);
-
   titledbApp.controller('tv-page', ['$scope', '$http', function($scope, $http) {
 
-    $http.get('https://raw.githubusercontent.com/initPRAGMA/Quick-Hub-Server/master/tv.json').
-    success(function(data, status, headers, config) {
-
-      // Parse the JSON
-      $scope.shows = data;
-
-      // Sort the JSON alphabetically
-      $scope.shows.sort(function(a, b){
-        if(a.name.toUpperCase() < b.name.toUpperCase()) return -1;
-        if(a.name.toUpperCase() > b.name.toUpperCase()) return 1;
-        return 0;
-      });
-
-      // Stringify the JSON and get its Length
-      var json = JSON.stringify($scope.shows);
-
-      // Remove double back slashes
-      json.replace('\\', '');
-
-      //Create the Titles Scope from the finished JSON
-      $scope.shows = JSON.parse(json);
-
-    }).
-    error(function(error){
-
-      console.log('Error' + error);
-
+    eztv.getShows(1, function (err, shows) {
+      if (err) { return console.log('No such page or something went wrong'); }
+      $scope.shows = shows;
+      console.dir(shows);
     });
 
   }]);
