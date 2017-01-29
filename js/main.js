@@ -7,7 +7,20 @@
   titledbApp.controller('TitleListController', ['$cookieStore', '$scope', '$http', function($cookieStore, $scope, $http) {
 
     $scope.selectedIndex = 0;
-    $scope.page = 1;
+    $scope.movies_newest_page = 1;
+    $scope.movies_action_page = 1;
+    $scope.movies_adventure_page = 1;
+    $scope.movies_animation_page = 1;
+    $scope.movies_comedy_page = 1;
+    $scope.movies_crime_page = 1;
+    $scope.movies_drama_page = 1;
+    $scope.movies_family_page = 1;
+    $scope.movies_fantasy_page = 1;
+    $scope.movies_horror_page = 1;
+    $scope.movies_mystery_page = 1;
+    $scope.movies_romance_page = 1;
+    $scope.movies_scifi_page = 1;
+    $scope.tvshows_page = 1;
 
     $scope.initMovie = function(movie) {
       $scope.show = movie;
@@ -31,6 +44,24 @@
       });
     };
 
+    $scope.moreMovies = function (actuallyIncrease, category) {
+      if (actuallyIncrease) {
+        eval("$scope.movies_"+category.toLowerCase()+"_page++;");
+        if(category=='newest'){var url='https://yts.ag/api/v2/list_movies.json?limit=50&page='+eval("$scope.movies_"+category.toLowerCase()+"_page")} else
+        if(category=='SciFi'){var url='https://yts.ag/api/v2/list_movies.json?limit=50&page='+$scope.movies_scifi_page+'&genre=Sci-Fi'} else {
+          var url = 'https://yts.ag/api/v2/list_movies.json?limit=50&page='+eval("$scope.movies_"+category.toLowerCase()+"_page")+'&genre='+category;
+        };
+        $http.get(url).success(function(data, status, headers, config) {
+          var temp = [];
+          if(category=='newest'){temp=$scope.movies} else {
+            eval("temp = $scope.movies."+category.toLowerCase()+";");
+          }
+          temp.data.movies = temp.data.movies.concat(data.data.movies);
+          eval("$scope.movies."+category.toLowerCase()+" = temp;");
+        }).error(function(){console.log("Failed to load Featured Movies!")});
+      }
+    };
+
     $scope.initTVShow = function(show) {
       $scope.show = show;
       $scope.poster = show.images.poster;
@@ -38,29 +69,10 @@
       $scope.seasons = [];
 
       eztv.getShow(show.imdb_id, function (err, show) {
-        for (let i = 0; i < 11 || function(){$scope.selectedIndex=3}(); i++) {
+        for (let i = 0; i < 51 || function(){$scope.selectedIndex=3}(); i++) {
           $scope.seasons[i] = show.episodes.filter((episode) => episode.season === i);
         }
       });
-    };
-
-    $scope.moreMovies = function (actuallyIncrease, category) {
-      if (actuallyIncrease) {
-        $scope.page++
-        if(category == 'newest') { var url = 'https://yts.ag/api/v2/list_movies.json?limit=50&page='+$scope.page } else {
-          var url = 'https://yts.ag/api/v2/list_movies.json?limit=50&page='+$scope.page+'&genre='+category;
-        };
-        $http.get(url).
-        success(function(data, status, headers, config) {
-          var temp = [];
-          if(category=='newest'){temp=$scope.movies} else {
-            eval("temp = $scope.movies."+category.toLowerCase()+";");
-          }
-          temp.data.movies = temp.data.movies.concat(data.data.movies);
-          array = temp;
-          eval("$scope.movies."+category.toLowerCase()+" = temp;");
-        }).error(function(){console.log("Failed to load Featured Movies!")});
-      }
     };
 
     $scope.loadTVShow = function(episode) {
@@ -70,6 +82,19 @@
         console.log("Client is downloading: " + a.infoHash);
         a.files.forEach(function(a){angular.element(a.appendTo("#watchPlayer"))});
       });
+    };
+
+    $scope.moreTVShows = function(actuallyIncrease) {
+      if (actuallyIncrease) {
+        $scope.tvshows_page++
+        eztv.getShows($scope.tvshows_page, function (err, shows) {
+          if (err) { return console.log('No such page or something went wrong'); }
+          var temp = [];
+          temp=$scope.shows;
+          temp = temp.concat(shows);
+          $scope.shows = temp;
+        });
+      }
     };
 
     $scope.settings={eur:'',usa:'',leak:''};
@@ -144,7 +169,7 @@
     eztv.getShows(1, function (err, shows) {
       if (err) { return console.log('No such page or something went wrong'); }
       $scope.shows = shows;
-      console.dir(shows);
+      console.dir($scope.shows);
     });
 
   }]);
