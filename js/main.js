@@ -62,17 +62,18 @@
       }
     };
 
-    $scope.initTVShow = function(show) {
+  	$scope.initTVShow = function(show) {
       $scope.show = show;
       $scope.poster = show.images.poster;
       $scope.backdrop = show.images.poster;
       $scope.seasons = [];
 
-      eztv.getShow(show.imdb_id, function (err, show) {
-        for (let i = 0; i < 51 || function(){$scope.selectedIndex=3}(); i++) {
-          $scope.seasons[i] = show.episodes.filter((episode) => episode.season === i);
+      $http.get('http://eztvapi.ml/show/'+show.imdb_id).
+	  	success(function(data, status, headers, config) {
+	    	for (let i = 0; i < 51 || function(){$scope.selectedIndex=3}(); i++) {
+          $scope.seasons[i] = data.episodes.filter((episode) => episode.season === i);
         }
-      });
+	  	});
     };
 
     $scope.loadTVShow = function(episode) {
@@ -82,19 +83,6 @@
         console.log("Client is downloading: " + a.infoHash);
         a.files.forEach(function(a){angular.element(a.appendTo("#watchPlayer"))});
       });
-    };
-
-    $scope.moreTVShows = function(actuallyIncrease) {
-      if (actuallyIncrease) {
-        $scope.tvshows_page++
-        eztv.getShows($scope.tvshows_page, function (err, shows) {
-          if (err) { return console.log('No such page or something went wrong'); }
-          var temp = [];
-          temp=$scope.shows;
-          temp = temp.concat(shows);
-          $scope.shows = temp;
-        });
-      }
     };
 
     $scope.settings={eur:'',usa:'',leak:''};
@@ -165,12 +153,25 @@
   }]);
 
   titledbApp.controller('tv-page', ['$scope', '$http', function($scope, $http) {
+    
+    $scope.moreTVShows = function(actuallyIncrease) {
+      if (actuallyIncrease) {
+        $scope.tvshows_page++
+        $http.get('http://eztvapi.ml/shows/'+$scope.tvshows_page).success(function(data, status, headers, config) {
+	    		var temp = [];
+        	temp=$scope.shows;
+	    		console.dir(temp);
+	    		console.dir($scope.shows);
+        	temp = temp.concat(data);
+        	$scope.shows = temp;
+	  		});
+      }
+    };
 
-    eztv.getShows(1, function (err, shows) {
-      if (err) { return console.log('No such page or something went wrong'); }
-      $scope.shows = shows;
-      console.dir($scope.shows);
-    });
+  	$http.get('http://eztvapi.ml/shows/1').
+  	success(function(data, status, headers, config) {
+    	$scope.shows = data;
+  	});
 
   }]);
 
