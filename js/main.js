@@ -22,6 +22,16 @@
     $scope.movies_scifi_page = 1;
     $scope.tvshows_page = 1;
 
+    $scope.search = function() {
+	    var query = document.getElementById("search").value;
+    	if($scope.selectedIndex == 0) {
+	      $http.get('https://yts.ag/api/v2/list_movies.json?query_term='+query).success(function(data, status, headers, config) {
+	        $scope.movies = JSON.parse(JSON.stringify(data));
+	        console.dir(data);
+	      });
+    	};
+    };
+
     $scope.initMovie = function(movie) {
       $scope.show = movie;
       $scope.poster = movie.medium_cover_image;

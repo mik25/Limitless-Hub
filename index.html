@@ -68,7 +68,7 @@
 				<!-- TitleBar - Search & Combobox -->
 				<div class="md-toolbar-tools" style="z-index:2;border-bottom:#e5e5e5 solid;border-bottom-width:1px;-webkit-app-region: drag">
 					<!--img ng-src="logo.png" style="height:60%"-->
-					<input ng-model="searchQuery" placeholder="Type anywhere to search..." class="search" id="search" value="" init-from-form>
+					<input ng-model="searchQuery" ng-change="search()" placeholder="Type anywhere to search..." class="search" id="search" value="" init-from-form>
 					<md-button class="md-icon-button" ng-click="searchQuery = ''" ng-show="searchQuery" style="display:inline-flex;-webkit-app-region: no-drag"><md-icon class="material-icons">close</md-icon></md-button>
 					<span flex></span>
 					<md-button class="md-icon-button" aria-label="Open Settings" ng-click="selectedIndex=4" style="-webkit-app-region: no-drag"><md-icon class="material-icons">settings</md-icon></md-button>
