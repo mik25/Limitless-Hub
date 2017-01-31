@@ -3,7 +3,7 @@
   var titledbApp = angular.module('titledbApp', ['ngMaterial', 'ngCookies', 'angular-inview']);
 	const settings = require('electron-settings');
 
-  titledbApp.controller('TitleListController', ['$cookieStore', '$scope', '$http', function($cookieStore, $scope, $http) {
+  titledbApp.controller('TitleListController', ['$cookieStore', '$scope', '$http', '$mdToast', function($cookieStore, $scope, $http, $mdToast) {
 
     $scope.selectedIndex = 0;
     $scope.movies_newest_page = 1;
@@ -74,10 +74,34 @@
     $scope.favMovie = function(movie){
     	var temp = [];
     	settings.get('favMovies').then(val => {
-    		temp = temp.concat(val);
+    		if(val != null) {
+	    		temp = temp.concat(val);
+    		}
+        temp = val.filter((obj) => obj.title !== movie.title);
     		temp.push(movie);
     		settings.set('favMovies', temp);
-    		$scope.fav = temp;
+    		$scope.movies.fav = temp;
+    		$mdToast.show(
+		      $mdToast.simple()
+		        .textContent('Added "'+movie.title+'" to watchlist!')
+		        .position('top right')
+		        .hideDelay(3000)
+		    );
+		  });
+    };
+
+    $scope.unfavMovie = function(movie){
+    	var temp = [];
+    	settings.get('favMovies').then(val => {
+    		temp = val.filter((obj) => obj.title !== movie.title);
+    		settings.set('favMovies', temp);
+    		$scope.movies.fav = temp;
+    		$mdToast.show(
+		      $mdToast.simple()
+		        .textContent('Removed "'+movie.title+'" from watchlist!')
+		        .position('top right')
+		        .hideDelay(3000)
+		    );
 		  });
     };
 
@@ -116,13 +140,12 @@
       $cookieStore.put('leak', $scope.settings.leak);
     };
 
-    settings.get('favMovies').then(val => {
-	    $scope.fav = val;
-	  });
-
     $http.get('https://yts.ag/api/v2/list_movies.json?limit=50').
     success(function(data, status, headers, config) {
       $scope.movies = data;
+	    settings.get('favMovies').then(val => {
+		    $scope.movies.fav = val;
+		  });
       $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Action').success(function(data, status, headers, config) {
 	      $scope.movies.action = JSON.parse(JSON.stringify(data));
 	    }).error(function(){console.log("Failed to load Action Movies!")});
@@ -174,7 +197,7 @@
 
   }]);
 
-  titledbApp.controller('tv-page', ['$scope', '$http', function($scope, $http) {
+  titledbApp.controller('tv-page', ['$scope', '$http', '$mdToast', function($scope, $http, $mdToast) {
     
     $scope.moreTVShows = function(actuallyIncrease) {
       if (actuallyIncrease) {
@@ -182,17 +205,53 @@
         $http.get('http://eztvapi.ml/shows/'+$scope.tvshows_page).success(function(data, status, headers, config) {
 	    		var temp = [];
         	temp=$scope.shows;
-	    		console.dir(temp);
-	    		console.dir($scope.shows);
         	temp = temp.concat(data);
         	$scope.shows = temp;
 	  		});
       }
     };
 
+    $scope.favTVShow = function(show){
+    	console.dir(show);
+    	var temp = [];
+    	settings.get('favTVShows').then(val => {
+    		if(val != null) {
+	    		temp = temp.concat(val);
+    		}
+        temp = val.filter((obj) => obj.slug !== show.slug);
+    		temp.push(show);
+    		settings.set('favTVShows', temp);
+    		$scope.shows.fav = temp;
+    		$mdToast.show(
+		      $mdToast.simple()
+		        .textContent('Added "'+show.title+'" to watchlist!')
+		        .position('top right')
+		        .hideDelay(3000)
+		    );
+		  });
+    };
+
+    $scope.unfavTVShow = function(show){
+    	var temp = [];
+    	settings.get('favTVShows').then(val => {
+    		temp = val.filter((obj) => obj.slug !== show.slug);
+    		settings.set('favTVShows', temp);
+    		$scope.shows.fav = temp;
+    		$mdToast.show(
+		      $mdToast.simple()
+		        .textContent('Removed "'+show.title+'" from watchlist!')
+		        .position('top right')
+		        .hideDelay(3000)
+		    );
+		  });
+    };
+
   	$http.get('http://eztvapi.ml/shows/1').
   	success(function(data, status, headers, config) {
     	$scope.shows = data;
+	    settings.get('favTVShows').then(val => {
+		    $scope.shows.fav = val;
+		  });
   	});
 
   }]);
