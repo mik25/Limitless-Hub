@@ -1,8 +1,7 @@
 (function($){
 
   var titledbApp = angular.module('titledbApp', ['ngMaterial', 'ngCookies', 'angular-inview']);
-  var eztvapi = require('eztvapi');
-  var eztv = eztvapi({apiLimitRequests:10,apiLimitInterval:60000});
+	const settings = require('electron-settings');
 
   titledbApp.controller('TitleListController', ['$cookieStore', '$scope', '$http', function($cookieStore, $scope, $http) {
 
@@ -25,9 +24,9 @@
     $scope.search = function() {
 	    var query = document.getElementById("search").value;
     	if($scope.selectedIndex == 0) {
+    		alert($scope.selectedMovieTab);
 	      $http.get('https://yts.ag/api/v2/list_movies.json?query_term='+query).success(function(data, status, headers, config) {
 	        $scope.movies = JSON.parse(JSON.stringify(data));
-	        console.dir(data);
 	      });
     	};
     };
@@ -72,6 +71,16 @@
       }
     };
 
+    $scope.favMovie = function(movie){
+    	var temp = [];
+    	settings.get('favMovies').then(val => {
+    		temp = temp.concat(val);
+    		temp.push(movie);
+    		settings.set('favMovies', temp);
+    		$scope.fav = temp;
+		  });
+    };
+
   	$scope.initTVShow = function(show) {
       $scope.show = show;
       $scope.poster = show.images.poster;
@@ -107,58 +116,61 @@
       $cookieStore.put('leak', $scope.settings.leak);
     };
 
+    settings.get('favMovies').then(val => {
+	    $scope.fav = val;
+	  });
+
     $http.get('https://yts.ag/api/v2/list_movies.json?limit=50').
     success(function(data, status, headers, config) {
       $scope.movies = data;
+      $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Action').success(function(data, status, headers, config) {
+	      $scope.movies.action = JSON.parse(JSON.stringify(data));
+	    }).error(function(){console.log("Failed to load Action Movies!")});
+
+	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Adventure').success(function(data, status, headers, config) {
+	      $scope.movies.adventure = JSON.parse(JSON.stringify(data));
+	    }).error(function(){console.log("Failed to load Adventure Movies!")});
+
+	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Animation').success(function(data, status, headers, config) {
+	      $scope.movies.animation = JSON.parse(JSON.stringify(data));
+	    }).error(function(){console.log("Failed to load Animation Movies!")});
+
+	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Comedy').success(function(data, status, headers, config) {
+	      $scope.movies.comedy = JSON.parse(JSON.stringify(data));
+	    }).error(function(){console.log("Failed to load Comedy Movies!")});
+	    
+	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Crime').success(function(data, status, headers, config) {
+	      $scope.movies.crime = JSON.parse(JSON.stringify(data));
+	    }).error(function(){console.log("Failed to load Crime Movies!")});
+
+	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Drama').success(function(data, status, headers, config) {
+	      $scope.movies.drama = JSON.parse(JSON.stringify(data));
+	    }).error(function(){console.log("Failed to load Drama Movies!")});
+
+	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Family').success(function(data, status, headers, config) {
+	      $scope.movies.family = JSON.parse(JSON.stringify(data));
+	    }).error(function(){console.log("Failed to load Family Movies!")});
+
+	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Fantasy').success(function(data, status, headers, config) {
+	      $scope.movies.fantasy = JSON.parse(JSON.stringify(data));
+	    }).error(function(){console.log("Failed to load Fantasy Movies!")});
+
+	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Horror').success(function(data, status, headers, config) {
+	      $scope.movies.horror = JSON.parse(JSON.stringify(data));
+	    }).error(function(){console.log("Failed to load Horror Movies!")});
+
+	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Mystery').success(function(data, status, headers, config) {
+	      $scope.movies.mystery = JSON.parse(JSON.stringify(data));
+	    }).error(function(){console.log("Failed to load Mystery Movies!")});
+	    
+	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Romance').success(function(data, status, headers, config) {
+	      $scope.movies.romance = JSON.parse(JSON.stringify(data));
+	    }).error(function(){console.log("Failed to load Romance Movies!")});
+
+	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Sci-Fi').success(function(data, status, headers, config) {
+	      $scope.movies.scifi = JSON.parse(JSON.stringify(data));
+	    }).error(function(){console.log("Failed to load Sci-Fi Movies!")});
     }).error(function(){console.log("Failed to load Featured Movies!")});
-
-    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Action').success(function(data, status, headers, config) {
-      $scope.movies.action = JSON.parse(JSON.stringify(data));
-    }).error(function(){console.log("Failed to load Action Movies!")});
-
-    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Adventure').success(function(data, status, headers, config) {
-      $scope.movies.adventure = JSON.parse(JSON.stringify(data));
-    }).error(function(){console.log("Failed to load Adventure Movies!")});
-
-    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Animation').success(function(data, status, headers, config) {
-      $scope.movies.animation = JSON.parse(JSON.stringify(data));
-    }).error(function(){console.log("Failed to load Animation Movies!")});
-
-    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Comedy').success(function(data, status, headers, config) {
-      $scope.movies.comedy = JSON.parse(JSON.stringify(data));
-    }).error(function(){console.log("Failed to load Comedy Movies!")});
-    
-    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Crime').success(function(data, status, headers, config) {
-      $scope.movies.crime = JSON.parse(JSON.stringify(data));
-    }).error(function(){console.log("Failed to load Crime Movies!")});
-
-    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Drama').success(function(data, status, headers, config) {
-      $scope.movies.drama = JSON.parse(JSON.stringify(data));
-    }).error(function(){console.log("Failed to load Drama Movies!")});
-
-    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Family').success(function(data, status, headers, config) {
-      $scope.movies.family = JSON.parse(JSON.stringify(data));
-    }).error(function(){console.log("Failed to load Family Movies!")});
-
-    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Fantasy').success(function(data, status, headers, config) {
-      $scope.movies.fantasy = JSON.parse(JSON.stringify(data));
-    }).error(function(){console.log("Failed to load Fantasy Movies!")});
-
-    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Horror').success(function(data, status, headers, config) {
-      $scope.movies.horror = JSON.parse(JSON.stringify(data));
-    }).error(function(){console.log("Failed to load Horror Movies!")});
-
-    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Mystery').success(function(data, status, headers, config) {
-      $scope.movies.mystery = JSON.parse(JSON.stringify(data));
-    }).error(function(){console.log("Failed to load Mystery Movies!")});
-    
-    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Romance').success(function(data, status, headers, config) {
-      $scope.movies.romance = JSON.parse(JSON.stringify(data));
-    }).error(function(){console.log("Failed to load Romance Movies!")});
-
-    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Sci-Fi').success(function(data, status, headers, config) {
-      $scope.movies.scifi = JSON.parse(JSON.stringify(data));
-    }).error(function(){console.log("Failed to load Sci-Fi Movies!")});
 
   }]);
 
