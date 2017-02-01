@@ -75,8 +75,8 @@
     	settings.get('favMovies').then(val => {
     		if(val != null) {
 	    		temp = temp.concat(val);
+        		temp = val.filter((obj) => obj.title !== movie.title);
     		}
-        temp = val.filter((obj) => obj.title !== movie.title);
     		temp.push(movie);
     		settings.set('favMovies', temp);
     		$scope.movies.fav = temp;
@@ -216,8 +216,8 @@
     	settings.get('favTVShows').then(val => {
     		if(val != null) {
 	    		temp = temp.concat(val);
+        		temp = val.filter((obj) => obj.slug !== show.slug);
     		}
-        temp = val.filter((obj) => obj.slug !== show.slug);
     		temp.push(show);
     		settings.set('favTVShows', temp);
     		$scope.shows.fav = temp;
