@@ -1,18 +1,16 @@
-﻿<html ng-app="titledbApp" style="background-color:#e2e2e2">
+﻿<html ng-app="app">
 
 	<head>
 
-		<!-- Roboto Font -->
+		<!-- Fonts -->
 		<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-
-		<!-- MaterialDesignIcons -->
 		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-		<!-- Custom Styling -->
+		<!-- CSS -->
 		<link rel="stylesheet" href="css/custom.css" />
+		<link rel="stylesheet" href="css/angular-material.min.css">
 
 		<!-- AngularJS -->
-		<link rel="stylesheet" href="css/angular-material.min.css">
 		<script src="js/angular.min.js"></script>
 		<script src="js/angular-animate.min.js"></script>
 		<script src="js/angular-aria.min.js"></script>
@@ -23,40 +21,13 @@
 
 		<!-- jQuery -->
 		<script src="js/jquery.min.js"></script>
-
 		<script src="js/angular-inview.js"></script>
 
-		<!-- Video Player -->
-		<link href="css/video-js.css" rel="stylesheet">
-		<script src="js/video-js.js"></script>
-		<!-- ¬ Resolution-Switcher -->
-		<link href="css/videojs-resolution-switcher.css" rel="stylesheet" type="text/css" />
-		<script src="js/videojs-resolution-switcher.js"></script>
-		<script src="https://cdn.jsdelivr.net/webtorrent/latest/webtorrent.min.js"></script>
+		<!-- WebTorrent -->
+		<script src="js/webtorrent.min.js"></script>
 
-		<!-- Angular Controllers -->
+		<!-- Main -->
 		<script src="js/main.js"></script>
-
-		<script>
-		const remote = require('electron').remote;
-		var WebTorrent = require('webtorrent');
-
-		document.addEventListener("keydown", function (e) {
-			if (e.which === 123) {
-				remote.getCurrentWindow().toggleDevTools();
-			}
-			if (!e.metaKey) {
-				if(e.keyCode >= 65 && event.keyCode <= 90 || e.keyCode >= 48 && event.keyCode <= 57) {
-					document.getElementById("search").focus();
-				}
-			}
-		});
-		document.addEventListener("keyup", function (e) {
-			if (e.keyCode == 27) {
-				searchQuery = '';
-			}
-		});
-		</script>
 
 	</head>
 
@@ -64,19 +35,32 @@
 
 		<div layout="column" layout-fill>
 
+			<!-- Toolbar -->
 			<md-toolbar style="background-color:#fff;color:#555">
-				<!-- TitleBar - Search & Combobox -->
-				<div class="md-toolbar-tools" style="z-index:2;border-bottom:#e5e5e5 solid;border-bottom-width:1px;-webkit-app-region: drag">
+
+				<!-- Search & Combobox -->
+				<div class="md-toolbar-tools">
+
+					<!-- Logo -->
 					<img ng-src="logo.png" style="height:100%">
-					<input ng-model="searchQuery" ng-model-options="{ debounce: 500 }" ng-change="search()" placeholder="Type anywhere to search..." class="search" id="search" value="" init-from-form>
+
+					<!-- Search -->
+					<input ng-model="searchQuery" ng-model-options="{debounce:500}" ng-change="search()" placeholder="Type anywhere to search..." class="search" id="search" value="" init-from-form>
 					<md-button class="md-icon-button" ng-click="searchQuery = '';search(true)" ng-show="searchQuery" style="display:inline-flex;-webkit-app-region: no-drag"><md-icon class="material-icons">close</md-icon></md-button>
+
 					<span flex></span>
-					<md-button class="md-icon-button" aria-label="Open Settings" ng-click="selectedIndex=4" style="-webkit-app-region: no-drag"><md-icon class="material-icons">settings</md-icon></md-button>
-					<md-button class="md-icon-button" onclick="remote.getCurrentWindow().minimize()" style="-webkit-app-region: no-drag"><md-icon class="material-icons">expand_more</md-icon></md-button>
-					<md-button class="md-icon-button" onclick="remote.getCurrentWindow().maximize()" style="-webkit-app-region: no-drag"><md-icon class="material-icons">expand_less</md-icon></md-button>
-					<md-button class="md-icon-button" onclick="remote.getCurrentWindow().close()" style="-webkit-app-region: no-drag"><md-icon class="material-icons">close</md-icon></md-button>
+
+					<!-- Settings Button -->
+					<md-button class="md-icon-button" aria-label="Open Settings" ng-click="selectedIndex=4" style="-webkit-app-region:no-drag;display:none"><md-icon class="material-icons">settings</md-icon></md-button>
+
+					<!-- Combobox -->
+					<md-button class="md-icon-button" onclick="remote.getCurrentWindow().minimize()" style="-webkit-app-region:no-drag"><md-icon class="material-icons">expand_more</md-icon></md-button>
+					<md-button class="md-icon-button" onclick="remote.getCurrentWindow().maximize()" style="-webkit-app-region:no-drag"><md-icon class="material-icons">expand_less</md-icon></md-button>
+					<md-button class="md-icon-button" onclick="remote.getCurrentWindow().close()" style="-webkit-app-region:no-drag"><md-icon class="material-icons">close</md-icon></md-button>
+
 				</div>
-				<!-- TitleBar - Tabs -->
+
+				<!-- Tabs -->
 				<md-tabs md-stretch-tabs class="md-whiteframe-2dp" md-selected="selectedIndex" style="z-index:1">
 					<md-tab>Movies</md-tab>
 					<md-tab>TV Shows</md-tab>
@@ -84,345 +68,116 @@
 					<md-tab>Watch Page</md-tab>
 					<md-tab>Settings</md-tab>
 				</md-tabs>
+
 			</md-toolbar>
 
 			<md-content flex layout-fill style="background-color:#e2e2e2">
-				
+
 				<ng-switch on="selectedIndex" class="tabpanel-container" style="background-color:#e2e2e2">
-					
-					<div role="tabpanel" id="movies-page" aria-labelledby="tab1" ng-switch-when="0" md-swipe-left="next()" md-swipe-right="previous()" layout-padding>
 
+					<!-- Movies Tab -->
+					<div role="tabpanel" ng-switch-when="0" md-swipe-left="next()" md-swipe-right="previous()" layout-padding>
+						
+						<!-- Search Results Grid -->
 						<span ng-if="searching == true" style="padding:0">
-
 							<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px" style="margin:12;padding-top:0">
-
-								<md-grid-tile ng-repeat="movie in movies.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+								<md-grid-tile ng-repeat="movie in movies.data.movies" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
 									<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
 										<span layout="row" layout-align="end center" layout-fill>
-											<md-button class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
+											<md-button class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5">
+												<md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon>
+											</md-button>
 										</span>
 									</md-grid-tile-header>
 									<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
 									<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
 								</md-grid-tile>
-
 							</md-grid-list>
 							<span in-view="moreMovies($inview,'newest')" ng-show="searching == false">Loading more...</span>
 							<span ng-show="searching == true && results == false">No results...</span>
-
 						</span>
 
+						<!-- Browse Tabs -->
 						<md-tabs md-dynamic-height md-border-bottom ng-if="searching == false" style="padding:0">
 
-						  	<md-tab label="Newest">
+							<!-- Newest -->
+							<md-tab label="Newest">
 								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
-									
 									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
-
-										<md-grid-tile ng-repeat="movie in movies.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+										<md-grid-tile ng-repeat="movie in movies.data.movies" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
 											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
 												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
+													<md-button class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5">
+														<md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon>
+													</md-button>
 												</span>
 											</md-grid-tile-header>
 											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
 											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
 										</md-grid-tile>
-
 									</md-grid-list>
 									<span in-view="moreMovies($inview,'newest')" ng-show="searching == false">Loading more...</span>
 									<span ng-show="searching == true && results == false">No results...</span>
-
 								</md-content>
-						  	</md-tab>
+							</md-tab>
 
-						  	<md-tab label="Watchlist">
+							<!-- Watchlist -->
+							<md-tab label="Watchlist">
 								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
-									
 									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
-
-										<md-grid-tile ng-repeat="movie in movies.fav | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1" ng-if="movie.medium_cover_image">
+										<md-grid-tile ng-repeat="movie in movies.fav" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1" ng-if="movie.medium_cover_image">
 											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
 												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="unfavMovie(movie)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star</md-icon></md-button>
+													<md-button class="md-icon-button" ng-click="unfavMovie(movie)" style="color:#e6e8f5;z-index:5">
+														<md-icon class="material-icons" style="color:#e6e8f5">star</md-icon>
+													</md-button>
 												</span>
 											</md-grid-tile-header>
 											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
 											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
 										</md-grid-tile>
-
 									</md-grid-list>
-
 								</md-content>
-						  	</md-tab>
+							</md-tab>
 
-						  	<md-tab label="Action">
-								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
-								  
-									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
-
-										<md-grid-tile ng-repeat="movie in movies.action.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
-												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
-												</span>
-											</md-grid-tile-header>
-											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
-											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
-										</md-grid-tile>
-
-									</md-grid-list>
-									<span in-view="moreMovies($inview,'Action')">Loading more...</span>
-
-								</md-content>
-						  	</md-tab>
-
-						  	<md-tab label="Adventure">
-								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
-								  
-									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
-
-										<md-grid-tile ng-repeat="movie in movies.adventure.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
-												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
-												</span>
-											</md-grid-tile-header>
-											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
-											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
-										</md-grid-tile>
-
-									</md-grid-list>
-									<span in-view="moreMovies($inview,'Adventure')">Loading more...</span>
-
-								</md-content>
-						  	</md-tab>
-
-						  	<md-tab label="Animation">
-								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
-								  
-									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
-
-										<md-grid-tile ng-repeat="movie in movies.animation.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
-												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
-												</span>
-											</md-grid-tile-header>
-											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
-											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
-										</md-grid-tile>
-
-									</md-grid-list>
-									<span in-view="moreMovies($inview,'Animation')">Loading more...</span>
-
-								</md-content>
-						  	</md-tab>
-
-						  	<md-tab label="Comedy">
-								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
-								  
-									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
-
-										<md-grid-tile ng-repeat="movie in movies.comedy.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
-												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
-												</span>
-											</md-grid-tile-header>
-											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
-											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
-										</md-grid-tile>
-
-									</md-grid-list>
-									<span in-view="moreMovies($inview,'Comedy')">Loading more...</span>
-
-								</md-content>
-						  	</md-tab>
-
-						  	<md-tab label="Crime">
-								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
-								  
-									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
-
-										<md-grid-tile ng-repeat="movie in movies.crime.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
-												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
-												</span>
-											</md-grid-tile-header>
-											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
-											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
-										</md-grid-tile>
-
-									</md-grid-list>
-									<span in-view="moreMovies($inview,'Crime')">Loading more...</span>
-
-								</md-content>
-						  	</md-tab>
-
-						  	<md-tab label="Drama">
-								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
-								  
-									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
-
-										<md-grid-tile ng-repeat="movie in movies.drama.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
-												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
-												</span>
-											</md-grid-tile-header>
-											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
-											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
-										</md-grid-tile>
-
-									</md-grid-list>
-									<span in-view="moreMovies($inview,'Drama')">Loading more...</span>
-
-								</md-content>
-						  	</md-tab>
-
-						  	<md-tab label="Family">
-								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
-								  
-									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
-
-										<md-grid-tile ng-repeat="movie in movies.family.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
-												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
-												</span>
-											</md-grid-tile-header>
-											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
-											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
-										</md-grid-tile>
-
-									</md-grid-list>
-									<span in-view="moreMovies($inview,'Family')">Loading more...</span>
-
-								</md-content>
-						  	</md-tab>
-
-						  	<md-tab label="Fantasy">
-								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
-								  
-									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
-
-										<md-grid-tile ng-repeat="movie in movies.fantasy.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
-												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
-												</span>
-											</md-grid-tile-header>
-											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
-											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
-										</md-grid-tile>
-
-									</md-grid-list>
-									<span in-view="moreMovies($inview,'Fantasy')">Loading more...</span>
-
-								</md-content>
-						  	</md-tab>
-
-						  	<md-tab label="Horror">
-								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
-								  
-									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
-
-										<md-grid-tile ng-repeat="movie in movies.horror.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
-												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
-												</span>
-											</md-grid-tile-header>
-											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
-											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
-										</md-grid-tile>
-
-									</md-grid-list>
-									<span in-view="moreMovies($inview,'Horror')">Loading more...</span>
-
-								</md-content>
-						  	</md-tab>
-
-						  	<md-tab label="Mystery">
-								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
-								  
-									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
-
-										<md-grid-tile ng-repeat="movie in movies.mystery.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
-												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
-												</span>
-											</md-grid-tile-header>
-											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
-											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
-										</md-grid-tile>
-
-									</md-grid-list>
-									<span in-view="moreMovies($inview,'Mystery')">Loading more...</span>
-
-								</md-content>
-						  	</md-tab>
-
-						  	<md-tab label="Romance">
-								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
-								  
-									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
-
-										<md-grid-tile ng-repeat="movie in movies.romance.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
-												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
-												</span>
-											</md-grid-tile-header>
-											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
-											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
-										</md-grid-tile>
-
-									</md-grid-list>
-									<span in-view="moreMovies($inview,'Romance')">Loading more...</span>
-
-								</md-content>
-						  	</md-tab>
-
-						  	<md-tab label="Sci-Fi">
-								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
-								  
-									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
-
-										<md-grid-tile ng-repeat="movie in movies.scifi.data.movies | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
-												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
-												</span>
-											</md-grid-tile-header>
-											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
-											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
-										</md-grid-tile>
-
-									</md-grid-list>
-									<span in-view="moreMovies($inview,'SciFi')">Loading more...</span>
-
-								</md-content>
-						  	</md-tab>
+							<!-- Genre Tabs -->
+							<span ng-repeat="tab in movie_tabs">
+								<md-tab label="{{tab}}">
+									<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
+										<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
+											<md-grid-tile ng-repeat="movie in movies[tab.toLowerCase().replace('-', '')].data.movies" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+												<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
+													<span layout="row" layout-align="end center" layout-fill>
+														<md-button class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5">
+															<md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon>
+														</md-button>
+													</span>
+												</md-grid-tile-header>
+												<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
+												<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
+											</md-grid-tile>
+										</md-grid-list>
+										<span in-view="moreMovies($inview,'Action')">Loading more...</span>
+									</md-content>
+								</md-tab>
+							</span>
 
 						</md-tabs>
 
 					</div>
 
-					<div role="tabpanel" id="tv-page" ng-controller="tv-page" aria-labelledby="tab2" ng-switch-when="1" md-swipe-left="next()" md-swipe-right="previous()" layout-padding style="margin:12;padding-top:0">
-
+					<!-- TV-Shows Tab -->
+					<div role="tabpanel" ng-controller="tv-page" ng-switch-when="1" md-swipe-left="next()" md-swipe-right="previous()" layout-padding style="margin:12;padding-top:0">
 						<md-tabs md-dynamic-height md-border-bottom style="padding:0">
-
-						  	<md-tab label="Popular">
+							<md-tab label="Popular">
 								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
 									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="8px">
-										<md-grid-tile ng-repeat="show in shows | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+										<md-grid-tile ng-repeat="show in shows" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
 											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
 												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="favTVShow(show)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
+													<md-button class="md-icon-button" ng-click="favTVShow(show)" style="color:#e6e8f5;z-index:5">
+														<md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon>
+													</md-button>
 												</span>
 											</md-grid-tile-header>
 											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initTVShow(show)"></md-grid-tile-footer>
@@ -431,74 +186,64 @@
 									</md-grid-list>
 									<span in-view="moreTVShows($inview)">Loading more...</span>
 								</md-content>
-						  	</md-tab>
-
-						  	<md-tab label="Watchlist">
+							</md-tab>
+							<md-tab label="Watchlist">
 								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
-									
 									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
-
-										<md-grid-tile ng-repeat="show in shows.fav | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1" ng-if="show.images.poster">
+										<md-grid-tile ng-repeat="show in shows.fav" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1" ng-if="show.images.poster">
 											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
 												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="unfavTVShow(show)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star</md-icon></md-button>
+													<md-button class="md-icon-button" ng-click="unfavTVShow(show)" style="color:#e6e8f5;z-index:5">
+														<md-icon class="material-icons" style="color:#e6e8f5">star</md-icon>
+													</md-button>
 												</span>
 											</md-grid-tile-header>
 											<img ng-src="{{show.images.poster}}" class="md-card-image" style="width:100%;height:100%">
 											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initTVShow(show)"></md-grid-tile-footer>
 										</md-grid-tile>
-
 									</md-grid-list>
-
 								</md-content>
-						  	</md-tab>
-
+							</md-tab>
 						</md-tabs>
-
 					</div>
 
+					<!-- Anime Tab -->
 					<div role="tabpanel" id="anime-page" ng-controller="anime-page" aria-labelledby="tab3" ng-switch-when="2" md-swipe-left="next()" md-swipe-right="previous()" layout-padding style="margin:12;padding-top:0">
-
-						<!-- List all Anime -->
 						<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="8px">
-
-							<md-grid-tile ng-repeat="anim in anime | filter : searchQuery" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
+							<md-grid-tile ng-repeat="anim in anime" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
 								<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(anim)"></md-grid-tile-footer>
 								<img ng-src="{{anim.poster}}" class="md-card-image" alt="{{anim.name}}" style="width:100%;height:100%">
 							</md-grid-tile>
-
 						</md-grid-list>
-
 					</div>
 
 					<div role="tabpanel" id="watch-page" aria-labelledby="tab3" ng-switch-when="3" md-swipe-left="next()" md-swipe-right="previous()" layout-align="center center">
-
 						<style>
-						#watchPlayer {
+							#watchPlayer {
 							display:inline-block;
 							width:auto;
 							height:340;
 							margin:0 auto;
 							line-height:340px
-						}
-						#watchPlayer > video {
+							}
+							#watchPlayer > video {
 							object-fit:fill;
 							width:auto;
 							height:340;
 							margin:0 auto;
 							background:black
 							display:inline-block;
-						}
-						#trailer {
+							}
+							#trailer {
 							margin:0 auto;
 							width:auto;
 							height:340;
 							display:inline-block!important;
-						}
-						#watchPlayer > img,
-						#watchPlayer > iframe {
+							}
+							#watchPlayer > img,
+							#watchPlayer > iframe {
 							display:none
-						}
+							}
 						</style>
 						<div style='height:544px;position:relative;background-image:linear-gradient(to bottom, rgba(226,226,226,0.6) 0%,rgba(226,226,226,0.6) 100%),url("{{backdrop}}");text-align:center;background-size:cover;background-repeat:no-repeat'>
 							<div style="padding-top:74px" id="playerContainer">
@@ -508,59 +253,39 @@
 							</div>
 							<div class="gradient-2"></div>
 						</div>
-
-						<!-- List all the episodes for the selected show -->
 						<div style="padding:20px" ng-if="!show.medium_cover_image">
-
 							<span ng-repeat="season in seasons">
 								<span ng-if="season[0].season">
 									<h3>Season {{season[0].season}}</h3>
 									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="16:9" md-gutter="8px">
-
 										<md-grid-tile ng-repeat="episode in season" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
 											<md-grid-tile-header style="background:rgba(0,0,0,0);height:100%" ng-click="loadTVShow(episode)"></md-grid-tile-header>
-											<md-grid-tile-footer style="background:linear-gradient(to bottom,rgba(40,44,52,0),rgba(40,44,52,0.8));height:26px" ng-click="loadTVShow(episode)"><h3 style="text-shadow:1px 1px 2px rgba(0,0,0,0.5)">#{{episode.episode}}</h3></md-grid-tile-footer>
+											<md-grid-tile-footer style="background:linear-gradient(to bottom,rgba(40,44,52,0),rgba(40,44,52,0.8));height:26px" ng-click="loadTVShow(episode)">
+												<h3 style="text-shadow:1px 1px 2px rgba(0,0,0,0.5)">#{{episode.episode}}</h3>
+											</md-grid-tile-footer>
 											<img ng-src="{{episode.screenshot}}" class="md-card-image" style="width:100%;height:100%">
 										</md-grid-tile>
-
 									</md-grid-list>
 								</span>
 							</span>
-
 						</div>
-
-						<!-- List all the episodes for the selected show -->
 						<div style="padding:20px" ng-if="show.medium_cover_image">
-
 							<h3>Suggested Movies</h3>
 							<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="8px">
-
 								<md-grid-tile ng-repeat="movie in movies.suggestions.data.movies|limitTo:12" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
 									<md-grid-tile-header style="background:rgba(0,0,0,0);height:100%" ng-click="initMovie(movie);loadMovie(movie)"></md-grid-tile-header>
 									<md-grid-tile-footer style="background:linear-gradient(to bottom,rgba(40,44,52,0),rgba(40,44,52,0.8));height:26px" ng-click="initMovie(movie);loadMovie(movie)"></md-grid-tile-footer>
 									<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
 								</md-grid-tile>
-
 							</md-grid-list>
-
 						</div>
-
 					</div>
-
 					<div role="tabpanel" id="config-page" aria-labelledby="tab4" ng-switch-when="4" md-swipe-left="next()" md-swipe-right="previous()" layout-align="center center" layout-margin>
-
 						<h3>Soon!</h3>
-
 					</div>
-				
 				</ng-switch>
-
 			</md-content>
-
 		</div>
-
 		<div id="gradient"></div>
-
 	</body>
-
 </html>

@@ -1,9 +1,24 @@
+const remote = require('electron').remote;
+var WebTorrent = require('webtorrent');
+
+document.addEventListener("keydown", function (e) {
+  if (e.which === 123) { remote.getCurrentWindow().toggleDevTools(); }
+  if (!e.metaKey) {
+    if(e.keyCode >= 65 && event.keyCode <= 90 || e.keyCode >= 48 && event.keyCode <= 57) {
+      document.getElementById("search").focus();
+    }
+  }
+});
+document.addEventListener("keyup", function (e) {
+  if (e.keyCode == 27) { searchQuery = ''; }
+});
+
 (function($){
 
-  var titledbApp = angular.module('titledbApp', ['ngMaterial', 'ngCookies', 'angular-inview']);
+  var app = angular.module('app', ['ngMaterial', 'ngCookies', 'angular-inview']);
 	const settings = require('electron-settings');
 
-  titledbApp.controller('TitleListController', ['$cookieStore', '$scope', '$http', '$mdToast', function($cookieStore, $scope, $http, $mdToast) {
+  app.controller('TitleListController', ['$cookieStore', '$scope', '$http', '$mdToast', function($cookieStore, $scope, $http, $mdToast) {
 
     $scope.selectedIndex = 0;
     $scope.searching = false;
@@ -22,6 +37,7 @@
     $scope.movies_romance_page = 1;
     $scope.movies_scifi_page = 1;
     $scope.tvshows_page = 1;
+    $scope.movie_tabs = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Drama', 'Family', 'Fantasy', 'Horror', 'Mystery', 'Romance', 'Sci-Fi'];
 
     $scope.search = function(clear) {
       $scope.searching = true;
@@ -216,7 +232,7 @@
 
   }]);
 
-  titledbApp.controller('tv-page', ['$scope', '$http', '$mdToast', function($scope, $http, $mdToast) {
+  app.controller('tv-page', ['$scope', '$http', '$mdToast', function($scope, $http, $mdToast) {
     
     $scope.moreTVShows = function(actuallyIncrease) {
       if (actuallyIncrease) {
@@ -275,7 +291,7 @@
 
   }]);
 
-  titledbApp.controller('anime-page', ['$scope', '$http', function($scope, $http) {
+  app.controller('anime-page', ['$scope', '$http', function($scope, $http) {
 
     $http.get('https://raw.githubusercontent.com/initPRAGMA/Quick-Hub-Server/master/anime.json').
     success(function(data, status, headers, config) {
