@@ -6,6 +6,8 @@
   titledbApp.controller('TitleListController', ['$cookieStore', '$scope', '$http', '$mdToast', function($cookieStore, $scope, $http, $mdToast) {
 
     $scope.selectedIndex = 0;
+    $scope.searching = false;
+    $scope.results = true;
     $scope.movies_newest_page = 1;
     $scope.movies_action_page = 1;
     $scope.movies_adventure_page = 1;
@@ -21,13 +23,31 @@
     $scope.movies_scifi_page = 1;
     $scope.tvshows_page = 1;
 
-    $scope.search = function() {
-	    var query = document.getElementById("search").value;
-    	if($scope.selectedIndex == 0) {
-	      $http.get('https://yts.ag/api/v2/list_movies.json?query_term='+query).success(function(data, status, headers, config) {
-	        $scope.movies = JSON.parse(JSON.stringify(data));
-	      });
-    	};
+    $scope.search = function(clear) {
+      $scope.searching = true;
+      var query = document.getElementById("search").value;
+      if(clear) {
+        if($scope.selectedIndex == 0) {
+          $http.get('https://yts.ag/api/v2/list_movies.json').success(function(data, status, headers, config) {
+            $scope.movies = JSON.parse(JSON.stringify(data));
+            $scope.searching = false;
+          });
+        };
+      } else {
+        if($scope.selectedIndex == 0) {
+          if(query.length == 0) {
+            $http.get('https://yts.ag/api/v2/list_movies.json').success(function(data, status, headers, config) {
+              $scope.movies = JSON.parse(JSON.stringify(data));
+              $scope.searching = false;
+            });
+          } else if(query.length > 3) {
+            $http.get('https://yts.ag/api/v2/list_movies.json?query_term='+query).success(function(data, status, headers, config) {
+              $scope.movies = JSON.parse(JSON.stringify(data));
+              if(data.data.movies == undefined){$scope.results = false;} else {$scope.results = true;}
+            });
+          }
+        };
+      }
     };
 
     $scope.initMovie = function(movie) {
