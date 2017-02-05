@@ -107,13 +107,13 @@
 										<md-grid-tile ng-repeat="movie in movies.data.movies" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
 											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
 												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5">
-														<md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon>
-													</md-button>
+													<md-button ng-if="!inFavs(movie.title)" class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
+													<md-button ng-if="inFavs(movie.title)" class="md-icon-button" ng-click="unfavMovie(movie.title)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:yellow">star</md-icon>
 												</span>
 											</md-grid-tile-header>
 											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
-											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
+											<md-grid-tile-footer ng-if="!movies.watched.includes(movie.title)" style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
+											<md-grid-tile-footer ng-if="movies.watched.includes(movie.title)" style="background:rgba(160,160,160,0.75);height:100%;z-index:4;border:#636363 solid 2px" ng-click="initMovie(movie)"></md-grid-tile-footer>
 										</md-grid-tile>
 									</md-grid-list>
 									<span in-view="moreMovies($inview,'newest')" ng-show="searching == false">Loading more...</span>
@@ -128,13 +128,12 @@
 										<md-grid-tile ng-repeat="movie in movies.fav" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1" ng-if="movie.medium_cover_image">
 											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
 												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="unfavMovie(movie)" style="color:#e6e8f5;z-index:5">
-														<md-icon class="material-icons" style="color:#e6e8f5">star</md-icon>
-													</md-button>
+													<md-button class="md-icon-button" ng-click="unfavMovie(movie.title)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:yellow">star</md-icon>
 												</span>
 											</md-grid-tile-header>
 											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
-											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
+											<md-grid-tile-footer ng-if="!movies.watched.includes(movie.title)" style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
+											<md-grid-tile-footer ng-if="movies.watched.includes(movie.title)" style="background:rgba(160,160,160,0.75);height:100%;z-index:4;border:#636363 solid 2px" ng-click="initMovie(movie)"></md-grid-tile-footer>
 										</md-grid-tile>
 									</md-grid-list>
 								</md-content>
@@ -148,13 +147,13 @@
 											<md-grid-tile ng-repeat="movie in movies[tab.toLowerCase().replace('-', '')].data.movies" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
 												<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
 													<span layout="row" layout-align="end center" layout-fill>
-														<md-button class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5">
-															<md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon>
-														</md-button>
+														<md-button ng-if="!inFavs(movie.title)" class="md-icon-button" ng-click="favMovie(movie)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
+														<md-button ng-if="inFavs(movie.title)" class="md-icon-button" ng-click="unfavMovie(movie.title)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:yellow">star</md-icon>
 													</span>
 												</md-grid-tile-header>
 												<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
-												<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
+											<md-grid-tile-footer ng-if="!movies.watched.includes(movie.title)" style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
+											<md-grid-tile-footer ng-if="movies.watched.includes(movie.title)" style="background:rgba(160,160,160,0.75);height:100%;z-index:4;border:#636363 solid 2px" ng-click="initMovie(movie)"></md-grid-tile-footer>
 											</md-grid-tile>
 										</md-grid-list>
 										<span in-view="moreMovies($inview,'Action')">Loading more...</span>
@@ -175,9 +174,8 @@
 										<md-grid-tile ng-repeat="show in shows" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
 											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
 												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="favTVShow(show)" style="color:#e6e8f5;z-index:5">
-														<md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon>
-													</md-button>
+													<md-button ng-if="!inFavs(show.title)" class="md-icon-button" ng-click="favTVShow(show)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
+													<md-button ng-if="inFavs(show.title)" class="md-icon-button" ng-click="unfavTVShow(show.title)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:yellow">star</md-icon>
 												</span>
 											</md-grid-tile-header>
 											<md-grid-tile-footer style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initTVShow(show)"></md-grid-tile-footer>
@@ -190,12 +188,10 @@
 							<md-tab label="Watchlist">
 								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
 									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
-										<md-grid-tile ng-repeat="show in shows.fav" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1" ng-if="show.images.poster">
+										<md-grid-tile ng-repeat="show in shows_fav" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1" ng-if="show.images.poster">
 											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
 												<span layout="row" layout-align="end center" layout-fill>
-													<md-button class="md-icon-button" ng-click="unfavTVShow(show)" style="color:#e6e8f5;z-index:5">
-														<md-icon class="material-icons" style="color:#e6e8f5">star</md-icon>
-													</md-button>
+													<md-button class="md-icon-button" ng-click="unfavTVShow(show.title)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:yellow">star</md-icon>
 												</span>
 											</md-grid-tile-header>
 											<img ng-src="{{show.images.poster}}" class="md-card-image" style="width:100%;height:100%">

@@ -85,6 +85,29 @@ document.addEventListener("keyup", function (e) {
       client.add(movie.torrents[0].url,function(a){
         console.log("Client is downloading: " + a.infoHash);
         a.files.forEach(function(a){angular.element(a.appendTo("#watchPlayer"))});
+        var markedAsWatched = false;
+        document.getElementById("watchPlayer").getElementsByTagName("video")[0].addEventListener('timeupdate',function(event){
+          console.log(((this.currentTime/this.duration) * 100));
+          if(((this.currentTime/this.duration) * 100).toFixed(2) >= 80 && markedAsWatched == false) {
+            markedAsWatched = true;
+            var temp = [];
+            settings.get('watchedMovies').then(val => {
+              if(val != null) {
+                temp = temp.concat(val);
+                temp = val.filter((obj) => obj !== movie.title);
+              }
+              temp.push(movie.title);
+              settings.set('watchedMovies', temp);
+              $scope.movies.watched = temp;
+              $mdToast.show(
+                $mdToast.simple()
+                  .textContent('Marked "'+movie.title+'" as watched.')
+                  .position('top right')
+                  .hideDelay(2000)
+              );
+            });
+          }
+        });
       });
     };
 
@@ -106,34 +129,38 @@ document.addEventListener("keyup", function (e) {
       }
     };
 
+    $scope.inFavs = function(title) {
+      return $scope.movies.fav.some(m => m.title == title)
+    }
+
     $scope.favMovie = function(movie){
-    	var temp = [];
-    	settings.get('favMovies').then(val => {
-    		if(val != null) {
-	    		temp = temp.concat(val);
-        		temp = val.filter((obj) => obj.title !== movie.title);
-    		}
-    		temp.push(movie);
-    		settings.set('favMovies', temp);
-    		$scope.movies.fav = temp;
-    		$mdToast.show(
-		      $mdToast.simple()
-		        .textContent('Added "'+movie.title+'" to watchlist!')
-		        .position('top right')
-		        .hideDelay(3000)
-		    );
-		  });
+      var temp = [];
+      settings.get('favMovies').then(val => {
+        if(val != null) {
+          temp = temp.concat(val);
+            temp = val.filter((obj) => obj.title !== movie.title);
+        }
+        temp.push(movie);
+        settings.set('favMovies', temp);
+        $scope.movies.fav = temp;
+        $mdToast.show(
+          $mdToast.simple()
+            .textContent('Added "'+movie.title+'" to watchlist!')
+            .position('top right')
+            .hideDelay(3000)
+        );
+      });
     };
 
-    $scope.unfavMovie = function(movie){
+    $scope.unfavMovie = function(title){
     	var temp = [];
     	settings.get('favMovies').then(val => {
-    		temp = val.filter((obj) => obj.title !== movie.title);
+    		temp = val.filter((obj) => obj.title !== title);
     		settings.set('favMovies', temp);
     		$scope.movies.fav = temp;
     		$mdToast.show(
 		      $mdToast.simple()
-		        .textContent('Removed "'+movie.title+'" from watchlist!')
+		        .textContent('Removed "'+title+'" from watchlist!')
 		        .position('top right')
 		        .hideDelay(3000)
 		    );
@@ -177,10 +204,13 @@ document.addEventListener("keyup", function (e) {
 
     $http.get('https://yts.ag/api/v2/list_movies.json?limit=50').
     success(function(data, status, headers, config) {
-      $scope.movies = data;
-	    settings.get('favMovies').then(val => {
-		    $scope.movies.fav = val;
-		  });
+      settings.get('favMovies').then(val => {
+        $scope.movies = data;
+        $scope.movies.fav = val;
+      });
+      settings.get('watchedMovies').then(val => {
+        $scope.movies.watched = val;
+      });
       $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Action').success(function(data, status, headers, config) {
 	      $scope.movies.action = JSON.parse(JSON.stringify(data));
 	    }).error(function(){console.log("Failed to load Action Movies!")});
@@ -234,6 +264,10 @@ document.addEventListener("keyup", function (e) {
 
   app.controller('tv-page', ['$scope', '$http', '$mdToast', function($scope, $http, $mdToast) {
     
+    $scope.inFavs = function(title) {
+      return $scope.shows_fav.some(s => s.title == title)
+    }
+
     $scope.moreTVShows = function(actuallyIncrease) {
       if (actuallyIncrease) {
         $scope.tvshows_page++
@@ -256,7 +290,7 @@ document.addEventListener("keyup", function (e) {
     		}
     		temp.push(show);
     		settings.set('favTVShows', temp);
-    		$scope.shows.fav = temp;
+    		$scope.shows_fav = temp;
     		$mdToast.show(
 		      $mdToast.simple()
 		        .textContent('Added "'+show.title+'" to watchlist!')
@@ -266,15 +300,15 @@ document.addEventListener("keyup", function (e) {
 		  });
     };
 
-    $scope.unfavTVShow = function(show){
+    $scope.unfavTVShow = function(title){
     	var temp = [];
     	settings.get('favTVShows').then(val => {
-    		temp = val.filter((obj) => obj.slug !== show.slug);
+    		temp = val.filter((obj) => obj.title !== title);
     		settings.set('favTVShows', temp);
-    		$scope.shows.fav = temp;
+    		$scope.shows_fav = temp;
     		$mdToast.show(
 		      $mdToast.simple()
-		        .textContent('Removed "'+show.title+'" from watchlist!')
+		        .textContent('Removed "'+title+'" from watchlist!')
 		        .position('top right')
 		        .hideDelay(3000)
 		    );
@@ -283,9 +317,9 @@ document.addEventListener("keyup", function (e) {
 
   	$http.get('http://eztvapi.ml/shows/1').
   	success(function(data, status, headers, config) {
-    	$scope.shows = data;
 	    settings.get('favTVShows').then(val => {
-		    $scope.shows.fav = val;
+		    $scope.shows_fav = val;
+        $scope.shows = data;
 		  });
   	});
 
