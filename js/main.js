@@ -151,12 +151,40 @@ document.addEventListener("keydown", function (e) {
       $scope.backdrop = show.images.poster;
       $scope.seasons = [];
 
-      $http.get('http://eztvapi.ml/show/'+show.imdb_id).
-	  	success(function(data, status, headers, config) {
-	    	for (let i = 0; i < 51 || function(){$scope.selectedIndex=3}(); i++) {
-          $scope.seasons[i] = data.episodes.filter((episode) => episode.season === i);
+      $http.get('http://eztvapi.ml/show/'+show.imdb_id).success(function(data1, status, headers, config) {
+	    	for (let i = 0; i < 41; i++) {
+          $scope.seasons[i] = data1.episodes.filter((episode) => episode.season === i);
         }
+        $http.get('http://api.tvmaze.com/lookup/shows?imdb='+show.imdb_id).success(function(data2, status, headers, config) {
+          $http.get('http://api.tvmaze.com/shows/'+data2["id"]+'/episodes').success(function(data3, status, headers, config) {
+
+            // Try get up to 40 seasons;
+            for (let i = 0; i < 41 || function(){$scope.selectedIndex=3}(); i++) {
+
+              // Filter the TVMaze result so we only have the episodes for the season on the for loop
+              var filter = data3.filter((episode) => episode.season === i);
+
+              // Add the Episode Screenshot image array to the seasons variable
+              for (let x = 0; x < filter.length; x++) {
+                var temp = [];
+                if($scope.seasons[i][x] != undefined) {
+                  temp = JSON.parse(JSON.stringify($scope.seasons[i][x]));
+                  if(filter[x]["image"] == null) {
+                    var image = {"original": "http://static.tvmaze.com/images/no-img/no-img-landscape-text.png"};
+                  } else {
+                    var image = filter[x]["image"];
+                  };
+                  temp["image"] = image;
+                  $scope.seasons[i][x] = temp;
+                }
+              }
+
+            }
+
+          });
+        });
 	  	});
+
     };
 
     $scope.loadTVShow = function(episode) {
@@ -166,18 +194,6 @@ document.addEventListener("keydown", function (e) {
         console.log("Client is downloading: " + a.infoHash);
         a.files.forEach(function(a){angular.element(a.appendTo("#watchPlayer"))});
       });
-    };
-
-    $scope.settings={eur:'',usa:'',leak:''};
-    if($cookieStore.get('eur') != undefined) { $scope.settings.eur = $cookieStore.get('eur'); }
-    if($cookieStore.get('usa') != undefined) { $scope.settings.usa = $cookieStore.get('usa'); }
-    if($cookieStore.get('leak') != undefined) { $scope.settings.leak = $cookieStore.get('leak'); }
-
-    $scope.changeSetting = function(ev) {
-      //alert('EUR: ' + $scope.settings.eur + '| USA: ' + $scope.settings.usa + '| Leak: ' + $scope.settings.leak);
-      $cookieStore.put('eur', $scope.settings.eur);
-      $cookieStore.put('usa', $scope.settings.usa);
-      $cookieStore.put('leak', $scope.settings.leak);
     };
 
     $http.get('https://yts.ag/api/v2/list_movies.json?limit=50').success(function(data, status, headers, config) {
