@@ -7,10 +7,11 @@ document.addEventListener("keydown", function (e) {
     if(e.keyCode >= 65 && event.keyCode <= 90 || e.keyCode >= 48 && event.keyCode <= 57) {
       document.getElementById("search").focus();
     }
+  } else {
+    if(e.ctrlKey && e.keyCode === 65) {
+      document.getElementById("search").focus();
+    }
   }
-});
-document.addEventListener("keyup", function (e) {
-  if (e.keyCode == 27) { searchQuery = ''; }
 });
 
 (function($){
@@ -18,52 +19,31 @@ document.addEventListener("keyup", function (e) {
   var app = angular.module('app', ['ngMaterial', 'ngCookies', 'angular-inview']);
 	const settings = require('electron-settings');
 
-  app.controller('TitleListController', ['$cookieStore', '$scope', '$http', '$mdToast', function($cookieStore, $scope, $http, $mdToast) {
+  app.controller('TitleListController', ['$cookieStore', '$scope', '$http', '$mdToast', '$q', function($cookieStore, $scope, $http, $mdToast, $q) {
 
-    $scope.selectedIndex = 0;
-    $scope.searching = false;
-    $scope.results = true;
-    $scope.movies_newest_page = 1;
-    $scope.movies_action_page = 1;
-    $scope.movies_adventure_page = 1;
-    $scope.movies_animation_page = 1;
-    $scope.movies_comedy_page = 1;
-    $scope.movies_crime_page = 1;
-    $scope.movies_drama_page = 1;
-    $scope.movies_family_page = 1;
-    $scope.movies_fantasy_page = 1;
-    $scope.movies_horror_page = 1;
-    $scope.movies_mystery_page = 1;
-    $scope.movies_romance_page = 1;
-    $scope.movies_scifi_page = 1;
-    $scope.tvshows_page = 1;
+    // Default Values
+    angular.extend($scope,{selectedIndex:0, searching:false, results:true, pages:{Newest:1}, movies:{Newest:{},Search:{}}});
+
+    // Movies
     $scope.movie_tabs = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Drama', 'Family', 'Fantasy', 'Horror', 'Mystery', 'Romance', 'Sci-Fi'];
+    $scope.movie_tabs.forEach(function(genre){
+      $scope.movies[genre] = {};
+      $scope.pages[genre] = 1;
+    });
 
     $scope.search = function(clear) {
       $scope.searching = true;
       var query = document.getElementById("search").value;
-      if(clear) {
-        if($scope.selectedIndex == 0) {
-          $http.get('https://yts.ag/api/v2/list_movies.json').success(function(data, status, headers, config) {
-            $scope.movies = JSON.parse(JSON.stringify(data));
-            $scope.searching = false;
+      if($scope.selectedIndex == 0) {
+        if(query.length == 0) {
+          $scope.searching = false;
+        } else if(query.length > 3) {
+          $http.get('https://yts.ag/api/v2/list_movies.json?query_term='+query).success(function(data, status, headers, config) {
+            $scope.movies["Search"] = data;
+            if(data.data.movies == undefined){$scope.results = false;} else {$scope.results = true;}
           });
-        };
-      } else {
-        if($scope.selectedIndex == 0) {
-          if(query.length == 0) {
-            $http.get('https://yts.ag/api/v2/list_movies.json').success(function(data, status, headers, config) {
-              $scope.movies = JSON.parse(JSON.stringify(data));
-              $scope.searching = false;
-            });
-          } else if(query.length > 3) {
-            $http.get('https://yts.ag/api/v2/list_movies.json?query_term='+query).success(function(data, status, headers, config) {
-              $scope.movies = JSON.parse(JSON.stringify(data));
-              if(data.data.movies == undefined){$scope.results = false;} else {$scope.results = true;}
-            });
-          }
-        };
-      }
+        }
+      };
     };
 
     $scope.initMovie = function(movie) {
@@ -87,7 +67,6 @@ document.addEventListener("keyup", function (e) {
         a.files.forEach(function(a){angular.element(a.appendTo("#watchPlayer"))});
         var markedAsWatched = false;
         document.getElementById("watchPlayer").getElementsByTagName("video")[0].addEventListener('timeupdate',function(event){
-          console.log(((this.currentTime/this.duration) * 100));
           if(((this.currentTime/this.duration) * 100).toFixed(2) >= 80 && markedAsWatched == false) {
             markedAsWatched = true;
             var temp = [];
@@ -101,9 +80,9 @@ document.addEventListener("keyup", function (e) {
               $scope.movies.watched = temp;
               $mdToast.show(
                 $mdToast.simple()
-                  .textContent('Marked "'+movie.title+'" as watched.')
-                  .position('top right')
-                  .hideDelay(2000)
+                .textContent('Marked "'+movie.title+'" as watched.')
+                .position('top right')
+                .hideDelay(2000)
               );
             });
           }
@@ -113,56 +92,55 @@ document.addEventListener("keyup", function (e) {
 
     $scope.moreMovies = function (actuallyIncrease, category) {
       if (actuallyIncrease) {
-        eval("$scope.movies_"+category.toLowerCase()+"_page++;");
-        if(category=='newest'){var url='https://yts.ag/api/v2/list_movies.json?limit=50&page='+eval("$scope.movies_"+category.toLowerCase()+"_page")} else
-        if(category=='SciFi'){var url='https://yts.ag/api/v2/list_movies.json?limit=50&page='+$scope.movies_scifi_page+'&genre=Sci-Fi'} else {
-          var url = 'https://yts.ag/api/v2/list_movies.json?limit=50&page='+eval("$scope.movies_"+category.toLowerCase()+"_page")+'&genre='+category;
+        $scope.pages[category]++;
+        if(category=='Newest'){
+          var url = 'https://yts.ag/api/v2/list_movies.json?limit=50&page='+$scope.pages[category];
+        } else {
+          var url = 'https://yts.ag/api/v2/list_movies.json?limit=50&page='+$scope.pages[category]+'&genre='+category;
         };
         $http.get(url).success(function(data, status, headers, config) {
-          var temp = [];
-          if(category=='newest'){temp=$scope.movies} else {
-            eval("temp = $scope.movies."+category.toLowerCase()+";");
-          }
-          temp.data.movies = temp.data.movies.concat(data.data.movies);
-          eval("$scope.movies."+category.toLowerCase()+" = temp;");
+          var temp = {};
+          temp = $scope.movies[category];
+          temp["data"]["movies"] = temp["data"]["movies"].concat(data["data"]["movies"]);
+          $scope.movies[category] = temp;
         }).error(function(){console.log("Failed to load Featured Movies!")});
       }
     };
 
     $scope.inFavs = function(title) {
-      return $scope.movies.fav.some(m => m.title == title)
+      return $scope.movies["Watchlist"].some(m => m.title == title)
     }
 
-    $scope.favMovie = function(movie){
+    $scope.fav = function(movie){
       var temp = [];
       settings.get('favMovies').then(val => {
         if(val != null) {
           temp = temp.concat(val);
-            temp = val.filter((obj) => obj.title !== movie.title);
+          temp = val.filter((obj) => obj.title !== movie.title);
         }
         temp.push(movie);
         settings.set('favMovies', temp);
-        $scope.movies.fav = temp;
+        $scope.movies['Watchlist'] = temp;
         $mdToast.show(
           $mdToast.simple()
-            .textContent('Added "'+movie.title+'" to watchlist!')
-            .position('top right')
-            .hideDelay(3000)
+          .textContent('Added "'+movie.title+'" to watchlist!')
+          .position('top right')
+          .hideDelay(3000)
         );
       });
     };
 
-    $scope.unfavMovie = function(title){
+    $scope.unfav = function(title){
     	var temp = [];
     	settings.get('favMovies').then(val => {
     		temp = val.filter((obj) => obj.title !== title);
     		settings.set('favMovies', temp);
-    		$scope.movies.fav = temp;
+    		$scope.movies['Watchlist'] = temp;
     		$mdToast.show(
 		      $mdToast.simple()
-		        .textContent('Removed "'+title+'" from watchlist!')
-		        .position('top right')
-		        .hideDelay(3000)
+	        .textContent('Removed "'+title+'" from watchlist!')
+	        .position('top right')
+	        .hideDelay(3000)
 		    );
 		  });
     };
@@ -202,85 +180,49 @@ document.addEventListener("keyup", function (e) {
       $cookieStore.put('leak', $scope.settings.leak);
     };
 
-    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50').
-    success(function(data, status, headers, config) {
+    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50').success(function(data, status, headers, config) {
+
       settings.get('favMovies').then(val => {
-        $scope.movies = data;
-        $scope.movies.fav = val;
+        $scope.movies["Newest"] = data; //Featured
+        $scope.movies["Watchlist"] = val; //Watchlist
       });
       settings.get('watchedMovies').then(val => {
-        $scope.movies.watched = val;
+        $scope.movies.watched = val; //Watched
       });
-      $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Action').success(function(data, status, headers, config) {
-	      $scope.movies.action = JSON.parse(JSON.stringify(data));
-	    }).error(function(){console.log("Failed to load Action Movies!")});
 
-	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Adventure').success(function(data, status, headers, config) {
-	      $scope.movies.adventure = JSON.parse(JSON.stringify(data));
-	    }).error(function(){console.log("Failed to load Adventure Movies!")});
+      $q.all($scope.movie_tabs.map(genre=>$http.get('https://yts.ag/api/v2/list_movies.json',{params:{limit:50,genre:genre}}).then(res=>{
+        $scope.movies[genre] = res.data;
+      }, error => {
+        console.log(`Failed to load ${genre} Movies!`)
+      })));
 
-	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Animation').success(function(data, status, headers, config) {
-	      $scope.movies.animation = JSON.parse(JSON.stringify(data));
-	    }).error(function(){console.log("Failed to load Animation Movies!")});
-
-	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Comedy').success(function(data, status, headers, config) {
-	      $scope.movies.comedy = JSON.parse(JSON.stringify(data));
-	    }).error(function(){console.log("Failed to load Comedy Movies!")});
-	    
-	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Crime').success(function(data, status, headers, config) {
-	      $scope.movies.crime = JSON.parse(JSON.stringify(data));
-	    }).error(function(){console.log("Failed to load Crime Movies!")});
-
-	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Drama').success(function(data, status, headers, config) {
-	      $scope.movies.drama = JSON.parse(JSON.stringify(data));
-	    }).error(function(){console.log("Failed to load Drama Movies!")});
-
-	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Family').success(function(data, status, headers, config) {
-	      $scope.movies.family = JSON.parse(JSON.stringify(data));
-	    }).error(function(){console.log("Failed to load Family Movies!")});
-
-	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Fantasy').success(function(data, status, headers, config) {
-	      $scope.movies.fantasy = JSON.parse(JSON.stringify(data));
-	    }).error(function(){console.log("Failed to load Fantasy Movies!")});
-
-	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Horror').success(function(data, status, headers, config) {
-	      $scope.movies.horror = JSON.parse(JSON.stringify(data));
-	    }).error(function(){console.log("Failed to load Horror Movies!")});
-
-	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Mystery').success(function(data, status, headers, config) {
-	      $scope.movies.mystery = JSON.parse(JSON.stringify(data));
-	    }).error(function(){console.log("Failed to load Mystery Movies!")});
-	    
-	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Romance').success(function(data, status, headers, config) {
-	      $scope.movies.romance = JSON.parse(JSON.stringify(data));
-	    }).error(function(){console.log("Failed to load Romance Movies!")});
-
-	    $http.get('https://yts.ag/api/v2/list_movies.json?limit=50&genre=Sci-Fi').success(function(data, status, headers, config) {
-	      $scope.movies.scifi = JSON.parse(JSON.stringify(data));
-	    }).error(function(){console.log("Failed to load Sci-Fi Movies!")});
-    }).error(function(){console.log("Failed to load Featured Movies!")});
+    }).error(function(){console.log("Failed to load Movies!")});
 
   }]);
 
   app.controller('tv-page', ['$scope', '$http', '$mdToast', function($scope, $http, $mdToast) {
-    
+
+    // Default Values
+    angular.extend($scope,{shows:{}});
+    $scope.pages['shows'] = 1;
+
     $scope.inFavs = function(title) {
       return $scope.shows_fav.some(s => s.title == title)
-    }
+    };
 
     $scope.moreTVShows = function(actuallyIncrease) {
       if (actuallyIncrease) {
-        $scope.tvshows_page++
-        $http.get('http://eztvapi.ml/shows/'+$scope.tvshows_page).success(function(data, status, headers, config) {
+        $scope.pages['shows']++;
+        $http.get('http://eztvapi.ml/shows/'+$scope.pages['shows']).success(function(data, status, headers, config) {
 	    		var temp = [];
-        	temp=$scope.shows;
+        	temp = $scope.shows;
         	temp = temp.concat(data);
-        	$scope.shows = temp;
+        	$scope.shows = $scope.shows.concat(data);
 	  		});
       }
     };
 
-    $scope.favTVShow = function(show){
+    $scope.fav = function(show){
     	console.dir(show);
     	var temp = [];
     	settings.get('favTVShows').then(val => {
@@ -300,7 +242,7 @@ document.addEventListener("keyup", function (e) {
 		  });
     };
 
-    $scope.unfavTVShow = function(title){
+    $scope.unfav = function(title){
     	var temp = [];
     	settings.get('favTVShows').then(val => {
     		temp = val.filter((obj) => obj.title !== title);
