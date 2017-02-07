@@ -107,13 +107,13 @@
 										<md-grid-tile ng-repeat="movie in movies['Newest']['data']['movies']" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
 											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8));height:56px">
 												<span layout="row" layout-align="end center" layout-fill>
-													<span ng-if="movies.watched.includes(movie.title)" class="corner-ribbon">Watched</span>
+													<span ng-if="movies.watched.includes(movie.title)" ng-click="initMovie(movie)" class="corner-ribbon">Watched</span>
 													<md-button ng-if="!inFavs(movie.title)" class="md-icon-button" ng-click="fav(movie)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
 													<md-button ng-if="inFavs(movie.title)" class="md-icon-button" ng-click="unfav(movie.title)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:yellow">star</md-icon>
 												</span>
 											</md-grid-tile-header>
-											<div class="md-card-image" ng-if="!movies.watched.includes(movie.title)" style='background-size:cover;background-image:url("{{movie.medium_cover_image}}");width:100%;height:100%'></div>
-											<div class="md-card-image" ng-if="movies.watched.includes(movie.title)" style='background-size:cover;background-image:linear-gradient(to bottom, rgba(200,200,200,0.8) 0%,rgba(200,200,200,0.8) 100%),url("{{movie.medium_cover_image}}");width:100%;height:100%'></div>
+											<div class="md-card-image" ng-if="!movies.watched.includes(movie.title)" ng-click="initMovie(movie)" style='background-size:cover;background-image:url("{{movie.medium_cover_image}}");width:100%;height:100%'></div>
+											<div class="md-card-image" ng-if="movies.watched.includes(movie.title)" ng-click="initMovie(movie)" style='background-size:cover;background-image:linear-gradient(to bottom, rgba(200,200,200,0.8) 0%,rgba(200,200,200,0.8) 100%),url("{{movie.medium_cover_image}}");width:100%;height:100%'></div>
 											<md-grid-tile-footer ng-if="!movies.watched.includes(movie.title)" ng-click="initMovie(movie)" style="background:rgba(0,0,0,0);height:100%;z-index:4"></md-grid-tile-footer>
 										</md-grid-tile>
 									</md-grid-list>
@@ -127,15 +127,15 @@
 								<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
 									<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
 										<md-grid-tile ng-repeat="movie in movies['Watchlist']" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1" ng-if="movie.medium_cover_image">
-											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
+											<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8));height:56px">
 												<span layout="row" layout-align="end center" layout-fill>
-													<span ng-if="movies.watched.includes(movie.title)" class="corner-ribbon">Watched</span>
+													<span ng-if="movies.watched.includes(movie.title)" ng-click="initMovie(movie)" class="corner-ribbon">Watched</span>
 													<md-button class="md-icon-button" ng-click="unfav(movie.title)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:yellow">star</md-icon>
 												</span>
 											</md-grid-tile-header>
-											<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
-											<md-grid-tile-footer ng-if="!movies.watched.includes(movie.title)" style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
-											<md-grid-tile-footer ng-if="movies.watched.includes(movie.title)" style="background:rgba(160,160,160,0.75);height:100%;z-index:4;border:#636363 solid 2px" ng-click="initMovie(movie)"></md-grid-tile-footer>
+											<div class="md-card-image" ng-if="!movies.watched.includes(movie.title)" ng-click="initMovie(movie)" style='background-size:cover;background-image:url("{{movie.medium_cover_image}}");width:100%;height:100%'></div>
+											<div class="md-card-image" ng-if="movies.watched.includes(movie.title)" ng-click="initMovie(movie)" style='background-size:cover;background-image:linear-gradient(to bottom, rgba(200,200,200,0.8) 0%,rgba(200,200,200,0.8) 100%),url("{{movie.medium_cover_image}}");width:100%;height:100%'></div>
+											<md-grid-tile-footer ng-if="!movies.watched.includes(movie.title)" ng-click="initMovie(movie)" style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
 										</md-grid-tile>
 									</md-grid-list>
 								</md-content>
@@ -147,16 +147,16 @@
 									<md-content style="background-color:#e2e2e2" layout-margin style="margin:12;padding-top:4">
 										<md-grid-list md-cols="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="6" md-cols-xl="10" md-row-height="2:3" md-gutter="6px">
 											<md-grid-tile ng-repeat="movie in movies[tab]['data']['movies']" class="md-whiteframe-2dp" md-colspan-sm="1" md-colspan-xs="1">
-												<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8))">
+												<md-grid-tile-header style="background:linear-gradient(to top,rgba(40,44,52,0),rgba(40,44,52,0.8));height:56px">
 													<span layout="row" layout-align="end center" layout-fill>
-														<span ng-if="movies.watched.includes(movie.title)" class="corner-ribbon">Watched</span>
+														<span ng-if="movies.watched.includes(movie.title)" ng-click="initMovie(movie)" class="corner-ribbon">Watched</span>
 														<md-button ng-if="!inFavs(movie.title)" class="md-icon-button" ng-click="fav(movie)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:#e6e8f5">star_outline</md-icon></md-button>
 														<md-button ng-if="inFavs(movie.title)" class="md-icon-button" ng-click="unfav(movie.title)" style="color:#e6e8f5;z-index:5"><md-icon class="material-icons" style="color:yellow">star</md-icon>
 													</span>
 												</md-grid-tile-header>
-												<img ng-src="{{movie.medium_cover_image}}" class="md-card-image" style="width:100%;height:100%">
-											<md-grid-tile-footer ng-if="!movies.watched.includes(movie.title)" style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
-											<md-grid-tile-footer ng-if="movies.watched.includes(movie.title)" style="background:rgba(160,160,160,0.75);height:100%;z-index:4;border:#636363 solid 2px" ng-click="initMovie(movie)"></md-grid-tile-footer>
+												<div class="md-card-image" ng-if="!movies.watched.includes(movie.title)" ng-click="initMovie(movie)" style='background-size:cover;background-image:url("{{movie.medium_cover_image}}");width:100%;height:100%'></div>
+												<div class="md-card-image" ng-if="movies.watched.includes(movie.title)" ng-click="initMovie(movie)" style='background-size:cover;background-image:linear-gradient(to bottom, rgba(200,200,200,0.8) 0%,rgba(200,200,200,0.8) 100%),url("{{movie.medium_cover_image}}");width:100%;height:100%'></div>
+												<md-grid-tile-footer ng-if="!movies.watched.includes(movie.title)" ng-click="initMovie(movie)" style="background:rgba(0,0,0,0);height:100%;z-index:4" ng-click="initMovie(movie)"></md-grid-tile-footer>
 											</md-grid-tile>
 										</md-grid-list>
 										<span in-view="moreMovies($inview,tab)">Loading more...</span>
