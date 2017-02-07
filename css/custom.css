@@ -1,5 +1,6 @@
 * {
-  -webkit-user-select: none
+  -webkit-user-select: none;
+  outline: none
 }
 
 body {
@@ -60,6 +61,21 @@ img {
 [aria-controls="tab-content-3"],
 [aria-controls="tab-content-4"] {
     display: none!important;
+}
+
+.corner-ribbon {
+  width: 80px;
+  font-size: 8pt;
+  background: #e43;
+  position: absolute;
+  text-align: center;
+  line-height: 15px;
+  letter-spacing: 1px;
+  color: #f0f0f0;
+  top: 16px;
+  left: -18px;
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
 }
 
 md-grid-tile {
