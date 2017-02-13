@@ -1,6 +1,6 @@
 * {
   -webkit-user-select: none;
-  outline: none
+  outline: none;
 }
 
 body {
@@ -58,8 +58,8 @@ img {
   pointer-events:none!important;
 }
 
-[aria-controls="tab-content-3"],
-[aria-controls="tab-content-4"] {
+[aria-controls="tab-content-2"],
+[aria-controls="tab-content-3"] {
     display: none!important;
 }
 
@@ -92,6 +92,33 @@ md-grid-tile:hover {
   transform: scale(1.1);
   image-rendering: -webkit-optimize-contrast;
   z-index:1
+}
+
+.focus:focus {
+  outline:3px solid rgba(0,74,185,0.5);
+  outline-offset:-3px;
+}
+
+#watchPlayer {
+  display:inline-block;
+  width:auto;
+  height:340;
+  margin:0 auto;
+  line-height:340px
+}
+
+#watchPlayer > video {
+  object-fit:fill;
+  width:auto;
+  height:340;
+  margin:0 auto;
+  background:black
+  display:inline-block;
+}
+
+#watchPlayer > img,
+#watchPlayer > iframe {
+  display:none
 }
 
 md-grid-list md-grid-tile figure, md-grid-list md-grid-tile md-grid-tile-footer, md-grid-list md-grid-tile md-grid-tile-header {

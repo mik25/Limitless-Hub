@@ -22,7 +22,7 @@ document.addEventListener("keydown", function (e) {
   app.controller('TitleListController', ['$cookieStore', '$scope', '$http', '$mdToast', '$q', function($cookieStore, $scope, $http, $mdToast, $q) {
 
     // Default Values
-    angular.extend($scope,{selectedIndex:0, searching:false, results:true, pages:{Newest:1}, movies:{Newest:{},Search:{}}});
+    angular.extend($scope,{selectedIndex:0, searching:false, results:true, pages:{Newest:1}, watched:{episodes:{},movies:{}}, movies:{Newest:{},Search:{}}});
 
     // Movies
     $scope.movie_tabs = ['Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Drama', 'Family', 'Fantasy', 'Horror', 'Mystery', 'Romance', 'Sci-Fi'];
@@ -56,7 +56,7 @@ document.addEventListener("keydown", function (e) {
       success(function(data, status, headers, config) {
         $scope.movies.suggestions = JSON.parse(JSON.stringify(data));
       });
-      $scope.selectedIndex=3;
+      $scope.selectedIndex=2;
     };
 
     $scope.loadMovie = function(movie) {
@@ -159,7 +159,7 @@ document.addEventListener("keydown", function (e) {
           $http.get('http://api.tvmaze.com/shows/'+data2["id"]+'/episodes').success(function(data3, status, headers, config) {
 
             // Try get up to 40 seasons;
-            for (let i = 0; i < 41 || function(){$scope.selectedIndex=3}(); i++) {
+            for (let i = 0; i < 41 || function(){$scope.selectedIndex=2}(); i++) {
 
               // Filter the TVMaze result so we only have the episodes for the season on the for loop
               var filter = data3.filter((episode) => episode.season === i);
@@ -193,6 +193,28 @@ document.addEventListener("keydown", function (e) {
       client.add(episode.torrents["480p"].url,function(a){
         console.log("Client is downloading: " + a.infoHash);
         a.files.forEach(function(a){angular.element(a.appendTo("#watchPlayer"))});
+        var markedAsWatched = false;
+        document.getElementById("watchPlayer").getElementsByTagName("video")[0].addEventListener('timeupdate',function(event){
+          if(((this.currentTime/this.duration) * 100).toFixed(2) >= 80 && markedAsWatched == false) {
+            markedAsWatched = true;
+            var temp = [];
+            settings.get('watchedTVShowEpisodes').then(val => {
+              if(val != null) {
+                temp = temp.concat(val);
+                temp = val.filter((obj) => obj !== episode.tvdb_id + "-" + episode.title);
+              }
+              temp.push(episode.tvdb_id + "-" + episode.title);
+              settings.set('watchedTVShowEpisodes', temp);
+              $scope.watched.episodes = temp;
+              $mdToast.show(
+                $mdToast.simple()
+                .textContent('Marked "'+episode.title+'" as watched.')
+                .position('top right')
+                .hideDelay(2000)
+              );
+            });
+          }
+        });
       });
     };
 
@@ -279,40 +301,10 @@ document.addEventListener("keydown", function (e) {
 		    $scope.shows_fav = val;
         $scope.shows = data;
 		  });
-  	});
-
-  }]);
-
-  app.controller('anime-page', ['$scope', '$http', function($scope, $http) {
-
-    $http.get('https://raw.githubusercontent.com/initPRAGMA/Quick-Hub-Server/master/anime.json').
-    success(function(data, status, headers, config) {
-
-      // Parse the JSON
-      $scope.anime = data;
-
-      // Sort the JSON alphabetically
-      $scope.anime.sort(function(a, b){
-        if(a.name.toUpperCase() < b.name.toUpperCase()) return -1;
-        if(a.name.toUpperCase() > b.name.toUpperCase()) return 1;
-        return 0;
+      settings.get('watchedTVShowEpisodes').then(val => {
+        $scope.watched.episodes = val; //Watched
       });
-
-      // Stringify the JSON and get its Length
-      var json = JSON.stringify($scope.anime);
-
-      // Remove double back slashes
-      json.replace('\\', '');
-
-      //Create the Titles Scope from the finished JSON
-      $scope.anime = JSON.parse(json);
-
-    }).
-    error(function(error){
-
-      console.log('Error' + error);
-
-    });
+  	});
 
   }]);
 
